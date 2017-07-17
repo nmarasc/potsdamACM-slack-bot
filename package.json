@@ -1,0 +1,17 @@
+{
+  "name": "bender",
+  "version": "1.0.0",
+  "description": "SUNY Potsdam ACM slack bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No tests yet. Oh well.\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/client": "^3.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
