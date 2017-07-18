@@ -77,7 +77,7 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       console.log("Processing ROLL command...");
 
       var die;     
-      var value;
+      var result;
       
       // get die value to roll
       if(msg[2].toUpperCase().startsWith("D")){ 
@@ -94,11 +94,14 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
         return;
       }
       console.log("Die to roll: " + die);
- 
-      value = Math.floor((Math.random() * die) + 1);
-      console.log("rolled: " + value);
+
+      result = handleRollCommand(die);
+      console.log("rolled: " + result.rolls);
+
+      //value = Math.floor((Math.random() * die) + 1);
+      //console.log("rolled: " + value);
       rtm.sendMessage("<@" + message.user + "> " + 
-                      "You rolled a: " + value, message.channel);
+                      "You rolled:" + result.rolls, message.channel);
     }
 
     // JOIN command
@@ -153,7 +156,7 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   }
 });
 
-// reaction added handler (doesn't do messages for some god
+// reaction added handler (doesn't do messages for some godforsaken reason)
 rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
   console.log("\n" + evnt.reaction + " added to " + 
 	                   evnt.item.type + " by " + 
@@ -175,4 +178,18 @@ rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
   });
 });
 
-
+// handles roll commands
+// params:
+//   die - upper bound on roll
+//   times - number of times to roll (default 1)
+// returns:
+//   result of roll(s)
+function handleRollCommand(die, times = 1){
+  var result = { rolls : "" };
+  for(let i = 0; i < times; i++){
+    // Yes, there's an extra space at the beginning. Sue me.
+    result.rolls += " ";
+    result.rolls += Math.floor(Math.random() * die) + 1; 
+  }
+  return result;
+}
