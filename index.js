@@ -7,88 +7,171 @@ var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 var bot_token = process.env.SLACK_BOT_TOKEN || '';
 console.log("Token connected with: " + `${bot_token}`);
 
+// create clients to make api calls
 var rtm = new RtmClient(bot_token);
 var web = new WebClient(bot_token);
 
-var defaultChannel = "bender_dev";
-var channel;
-var name; 
 
+// channel ids
+var gamblers;
+var bender_dev;
+var default_channel;
+
+var bot_id;
+var game = {};
+
+// successfully authenticated
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
-  name = rtmStartData.self.id;
-  console.log(`Name/ID: ${name}`);
+  bot_id = rtmStartData.self.id;
+  console.log("Name/ID: " + bot_id);
+
   for (const c of rtmStartData.channels) {
     if (c.is_member){
       console.log("Member of channel: " + `${c.name}`);
-      if (c.name === defaultChannel) {
-        console.log("Setting read channel to: " + `${c.name}`);
-	channel = c.id; 
+      if (c.name === "bender_dev") {
+        console.log("Setting default channel to: " + `${c.name}`);
+	      default_channel = c.id;
+        bender_dev = c.id;
+      }
+      else if(c.name === "gamblers"){
+        gamblers = c.id;
       }
     }
   }
-  console.log(`Logged in as ${rtmStartData.self.name} of team ${rtmStartData.team.name}, but not yet connected to channel`);
+  console.log("Logged in as " + rtmStartData.self.name + 
+              " of team " + rtmStartData.team.name +
+              ", but not yet connected to channel");
 });
 
-rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function () {
-  console.log("RTM connection opened successfully\n\n\n");
+// successfully connected to RTM
+rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
+  console.log("RTM connection opened successfully\n\n");
 });
 
 rtm.start();
 
+// Message handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-  //console.log(`${message.text}`);
-  if(typeof message.text !== 'undefined') {
-    var msg = message.text.split(" ");
-    if(msg[0].toUpperCase() === "HI" && msg.length > 1){ 
-      if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(name)) {
-        rtm.sendMessage("<@" + message.user + "> I\'m a Bender. I bend girders. :partyparrot:", message.channel);
+  //console.log(message.text);
+
+  //ignore non messages with no text
+  if(typeof message.text === 'undefined') return;
+  
+  var msg = message.text.split(" ");
+  
+  // LEGACY HI COMMAND DO NOT REMOVE
+  if(msg[0].toUpperCase() === "HI" && msg.length > 1){ 
+    if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(bot_id)) {
+      rtm.sendMessage("<@" + message.user + "> " + 
+                      "I\'m a Bender. I bend girders. :partyparrot:"
+                      ,message.channel);
+    }
+  }
+  
+  // Start checking for real commands
+  if(msg[0].includes(bot_id) && msg.length > 1){
+    console.log("\nMention detected, checking for command..");
+    
+    // ROLL command
+    if(msg[1].toUpperCase() === "ROLL" && msg.length > 2){
+      console.log("Processing ROLL command...");
+
+      var die;     
+      var value;
+      
+      // get die value to roll
+      if(msg[2].toUpperCase().startsWith("D")){ 
+        die = parseInt(msg[2].substring(1)); 
+      }
+      else{ 
+        die = parseInt(msg[2]);
+      }
+
+      if(isNaN(die) || die < 2){
+        console.log("Not a valid roll: " + die);
+        rtm.sendMessage("<@" + message.user + "> " + 
+                        msg[2] + " is not a valid roll.",message.channel);
+        return;
+      }
+      console.log("Die to roll: " + die);
+ 
+      value = Math.floor((Math.random() * die) + 1);
+      console.log("rolled: " + value);
+      rtm.sendMessage("<@" + message.user + "> " + 
+                      "You rolled a: " + value, message.channel);
+    }
+
+    // JOIN command
+    if(msg[1].toUpperCase() === "JOIN"){
+      console.log("Processing JOIN from: " + message.channel);
+      if(message.channel !== gamblers && message.channel !== bender_dev){
+        rtm.sendMessage("<@" + message.user + "> User not added. " +
+                        "Please keep gambling content to <#" + gamblers + ">"
+                        ,message.channel);
+        return;
+      }
+      else{ 
+        console.log("Attemping to add " + message.user + " to game..");
+        if(game.hasOwnProperty(message.user)){
+          console.log("User " + message.user +
+                      " already exists with " + game[message.user] + " scrumbux");
+          rtm.sendMessage("<@" + message.user + "> You are already registered.\n" +
+                          "You currently have: " + game[message.user] + " scrumbux"
+                          ,message.channel);
+        }
+        else{
+          console.log("User " + message.user +
+                      " has successfully joined game");
+          game[message.user] = 100;
+          rtm.sendMessage("<@" + message.user + "> You have been registered.\n" +
+                          "You currently have: " + game[message.user] + " scrumbux"
+                          ,message.channel);
+        }
       }
     }
-    
-    // Start checking for commands
-    if(msg[0].includes(name) && msg.length > 1){
-      console.log("\nMention detected, checking for command..");
-      if(msg[1].toUpperCase() === "ROLL" && msg.length > 2){
-        // ROLL command found
-	console.log("Processing ROLL command...");
 
-	var die;     
-	var value;
-	//Hard test first
-	if(msg[2].toUpperCase().startsWith("D")){ die = parseInt(msg[2].substring(1)); }
-	else{ die = parseInt(msg[2]); }
-	if(isNaN(die) || die < 2){
-	  console.log("Not a valid roll: " + die);
-	  rtm.sendMessage("<@" + message.user + "> " + msg[2] + " is not a valid roll.",message.channel);
-	  return;
-	}
-	console.log("Die to roll: " + die);
-	 
-	value = Math.floor((Math.random() * die) + 1);
-	console.log("rolled: " + value);
-	rtm.sendMessage("<@" + message.user + "> You rolled a: " + value, message.channel);
+    // CHECKBUX command
+    if(msg[1].toUpperCase() == "CHECKBUX"){
+      console.log("Processing CHECKBUX from: " + message.channel);
+      if(message.channel !== gamblers && message.channel !== bender_dev){
+        rtm.sendMessage("<@" + message.user + "> " +
+                        "Please keep gambling content to <#" + gamblers + ">"
+                        ,message.channel);
+        return;
+      }
+      else if(game.hasOwnProperty(message.user)){
+        rtm.sendMessage("<@" + message.user + "> " +
+                        "You currently have: " + game[message.user] + " scrumbux"
+                        ,message.channel);
+      }
+      else{
+        rtm.sendMessage("<@" + message.user + "> " +
+                        "You are not currently registered. Use the JOIN command "
+                        ,message.channel);
       }
     }
   }
 });
 
-rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(reactionEvent) {
-  console.log("\n" + reactionEvent.reaction + " added to " + 
-	             reactionEvent.item.type + " by " + 
-	             reactionEvent.user);
-  //console.log(reactionEvent.item);
+// reaction added handler (doesn't do messages for some god
+rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
+  console.log("\n" + evnt.reaction + " added to " + 
+	                   evnt.item.type + " by " + 
+	                   evnt.user);
+  //console.log(evnt.item);
   
   var item = {
-    file         : reactionEvent.item.file,
-    file_comment : reactionEvent.item.file_comment,
-    channel      : reactionEvent.item.channel, 
-    ts           : reactionEvent.item.ts};
+    file         : evnt.item.file,
+    file_comment : evnt.item.file_comment,
+    channel      : evnt.item.channel, 
+    ts           : evnt.item.ts};
 
   //console.log("channel: " + item.channel + "\nts: " + item.ts);
   //console.log(item);
 
-  web.reactions.add(reactionEvent.reaction,reactionEvent.item, function handleAdd(err,res){
-    if(err){ console.log("There was an error"); } 
+  web.reactions.add(evnt.reaction,item, function handleAdd(err,res){
+    if(err){ console.log("There was an error, no reaction added"); }
+    else{ console.log("Posted successfully"); }
   });
 });
 
