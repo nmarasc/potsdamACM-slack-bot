@@ -56,103 +56,49 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
 
   //ignore non messages with no text
   if(typeof message.text === 'undefined') return;
-  
+ 
   var msg = message.text.split(" ");
   
-  // LEGACY HI COMMAND DO NOT REMOVE
-  if(msg[0].toUpperCase() === "HI" && msg.length > 1){ 
-    if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(bot_id)) {
-      rtm.sendMessage("<@" + message.user + "> " + 
-                      "I\'m a Bender. I bend girders. :partyparrot:"
-                      ,message.channel);
-    }
-  }
+  var processed_msg = processMessage(message.text);
+  var bot_msg;
   
-  // Start checking for real commands
-  if(msg[0].includes(bot_id) && msg.length > 1){
-    console.log("\nMention detected, checking for command..");
+  switch(processed_msg.type){
     
-    // ROLL command
-    if(msg[1].toUpperCase() === "ROLL" && msg.length > 2){
-      console.log("Processing ROLL command...");
+    case 0: // HI command
+      bot_msg = "I'm a Bender. I bend girders. :partyparrot:";
+      postMessage(message.user, bot_msg, message.channel);
+      break;
+    
+    case 1: // ROLL command
+      var roll_result = handleRollCommand(processed_msg.die);
+      console.log("Roll results: " + roll_result.rolls);
+      bot_msg = "You rolled:" + roll_result.rolls;
+      postMessage(message.user, bot_msg, message.channel);
+      break;
+    
+    case 2: // JOIN command
+      var join_result = handleJoinCommand(message.user, message.channel);
+      bot_msg = join_result.message;
+      postMessage(message.user, bot_msg, message.channel);
+      break;
 
-      var die;     
-      var result;
-      
-      // get die value to roll
-      if(msg[2].toUpperCase().startsWith("D")){ 
-        die = parseInt(msg[2].substring(1)); 
-      }
-      else{ 
-        die = parseInt(msg[2]);
-      }
+    case 3: // CHECKBUX command
+      var checkbux_result = handleCheckbuxCommand(message.user);
+      bot_msg = checkbux_result.message;
+      postMessage(message.user, bot_msg, message.channel);
+      break;
 
-      if(isNaN(die) || die < 2){
-        console.log("Not a valid roll: " + die);
-        rtm.sendMessage("<@" + message.user + "> " + 
-                        msg[2] + " is not a valid roll.",message.channel);
-        return;
-      }
-      console.log("Die to roll: " + die);
+    case 4: // HELP command
+      //var help_result = handleHelpCommand();
+      bot_msg = "Bite my shiny metal ass";
+      postMessage(message.user, bot_msg, message.channel);
+      break;
 
-      result = handleRollCommand(die);
-      console.log("rolled: " + result.rolls);
-
-      //value = Math.floor((Math.random() * die) + 1);
-      //console.log("rolled: " + value);
-      rtm.sendMessage("<@" + message.user + "> " + 
-                      "You rolled:" + result.rolls, message.channel);
-    }
-
-    // JOIN command
-    if(msg[1].toUpperCase() === "JOIN"){
-      console.log("Processing JOIN from: " + message.channel);
-      if(message.channel !== gamblers && message.channel !== bender_dev){
-        rtm.sendMessage("<@" + message.user + "> User not added. " +
-                        "Please keep gambling content to <#" + gamblers + ">"
-                        ,message.channel);
-        return;
+    default:
+      if(typeof processed_msg.message !== 'undefined'){
+        postMessage(message.user, processed_msg.message, message.channel);
       }
-      else{ 
-        console.log("Attemping to add " + message.user + " to game..");
-        if(game.hasOwnProperty(message.user)){
-          console.log("User " + message.user +
-                      " already exists with " + game[message.user] + " scrumbux");
-          rtm.sendMessage("<@" + message.user + "> You are already registered.\n" +
-                          "You currently have: " + game[message.user] + " scrumbux"
-                          ,message.channel);
-        }
-        else{
-          console.log("User " + message.user +
-                      " has successfully joined game");
-          game[message.user] = 100;
-          rtm.sendMessage("<@" + message.user + "> You have been registered.\n" +
-                          "You currently have: " + game[message.user] + " scrumbux"
-                          ,message.channel);
-        }
-      }
-    }
-
-    // CHECKBUX command
-    if(msg[1].toUpperCase() == "CHECKBUX"){
-      console.log("Processing CHECKBUX from: " + message.channel);
-      if(message.channel !== gamblers && message.channel !== bender_dev){
-        rtm.sendMessage("<@" + message.user + "> " +
-                        "Please keep gambling content to <#" + gamblers + ">"
-                        ,message.channel);
-        return;
-      }
-      else if(game.hasOwnProperty(message.user)){
-        rtm.sendMessage("<@" + message.user + "> " +
-                        "You currently have: " + game[message.user] + " scrumbux"
-                        ,message.channel);
-      }
-      else{
-        rtm.sendMessage("<@" + message.user + "> " +
-                        "You are not currently registered. Use the JOIN command "
-                        ,message.channel);
-      }
-    }
+      return;
   }
 });
 
@@ -178,6 +124,82 @@ rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
   });
 });
 
+// processes incoming message into command handled objects
+// params:
+//   msg - incoming message
+// returns:
+//   object tailored to commands
+function processMessage(msg){
+  var result = {};
+  msg = msg.split(" ");
+  
+  // Legacy "HI" command
+  if(msg[0].toUpperCase() === "HI" && msg.length > 1){ 
+    if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(bot_id)) {
+      result["type"] = 0;
+    }
+  }
+  
+  // Start checking for real commands
+  else if(msg[0].includes(bot_id) && msg.length > 1){
+    console.log("\nMention detected, checking for command..");
+    
+    // ROLL command
+    if(msg[1].toUpperCase() === "ROLL" && msg.length > 2){
+      console.log("Processing ROLL command...");
+      
+      var die;
+      
+      // get die value to roll
+      if(msg[2].toUpperCase().startsWith("D")){ 
+        die = parseInt(msg[2].substring(1)); 
+      }
+      else{ 
+        die = parseInt(msg[2]);
+      }
+      
+      // check for valid roll
+      if(isNaN(die) || die < 2){
+        console.log("Not a valid roll: " + msg[2]);
+        result["type"] = -1;
+        result["message"] = msg[2] + " is not a valid roll.";
+      }
+      else{
+        console.log("Die to roll: " + die);
+        result["type"] = 1;
+        result["die"] = die;
+      }
+    }
+  
+    // JOIN command
+    else if(msg[1].toUpperCase() === "JOIN"){
+      console.log("Processing JOIN command...");
+      result["type"] = 2;
+    }
+
+    // CHECKBUX command
+    else if(msg[1].toUpperCase() === "CHECKBUX"){
+      console.log("Processing CHECKBUX command...");
+      result["type"] = 3;
+    }
+
+    else if(msg[1].toUpperCase() === "HELP"){
+      console.log("Processing HELP command...");
+      result["type"] = 4;
+    }
+  
+  }
+  // Not a command or anything bot cares about
+  else{
+    result["type"] = -1;
+  }
+
+  return result;
+
+}
+
+
+
 // handles roll commands
 // params:
 //   die - upper bound on roll
@@ -192,4 +214,70 @@ function handleRollCommand(die, times = 1){
     result.rolls += Math.floor(Math.random() * die) + 1; 
   }
   return result;
+}
+
+// handle join command
+// params:
+//   user - user joining
+//   channel - channel joining from
+// returns: resulting message object
+function handleJoinCommand(user, channel){
+  var result = {};
+
+  if(channel !== gamblers && channel !== bender_dev){
+    result["message"] = "User not added. Please keep gambling content to " +
+                        "<#" + gamblers + ">";
+  }
+  else{ 
+    console.log("Attemping to add " + user + " to game..");
+    if(game.hasOwnProperty(user)){
+      result["message"] = "You are already registered.\n" +
+                          "You currently have: " + game[user] + " scrumbux";
+
+      console.log("User " + user + " already exists");
+    }
+    else{
+      game[user] = 100;
+      result["message"] = "You have been registered.\n" +
+                          "You currently have: " + game[user] + " scrumbux";
+
+      console.log("User " + user + " has successfully joined game");
+    }
+    return result;
+  }
+}
+
+// handle checkbux command
+// params:
+//   user - user checking
+// returns: resulting message object
+function handleCheckbuxCommand(user){
+  var result = {};
+
+  if(game.hasOwnProperty(user)){
+    result["message"] = "You currently have: " + game[user] + " scrumbux";
+  }
+  else{
+    result["message"] = "You are not currently registered.\n" +
+                        "Please use the JOIN command in <#" + gamblers + ">";
+  }
+
+  return result;
+}
+
+// handle help command
+// params: none
+// returns: message object
+function handleHelpCommand(){
+  return {};
+}
+
+// make sending messages more simple
+// params:
+//  user - user to notify
+//  message - message to notify with
+//  channel - where to post
+// returns: nothing
+function postMessage(user, message, channel){
+  rtm.sendMessage("<@" + user + "> " + message, channel);
 }
