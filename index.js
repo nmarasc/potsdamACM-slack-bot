@@ -5,37 +5,30 @@ var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 
 // bot token excluded from public repository for safety reasons
 var bot_token = process.env.SLACK_BOT_TOKEN || '';
-console.log("Token connected with: " + `${bot_token}`);
+console.log("Token connected with: " + bot_token);
 
 // create clients to make api calls
 var rtm = new RtmClient(bot_token);
 var web = new WebClient(bot_token);
 
-
 // channel ids
-var gamblers;
-var bender_dev;
-var default_channel;
-
-var bot_id;
+var channel_ids = {};
+// keeps track of scrumbux and people registered
 var game = {};
+// id for the bot
+var bot_id;
 
-// successfully authenticated
+// Successfully authenticated
+// Get bot id and the ids of channels bot is a member of
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
   bot_id = rtmStartData.self.id;
   console.log("Name/ID: " + bot_id);
 
   for (const c of rtmStartData.channels) {
     if (c.is_member){
-      console.log("Member of channel: " + `${c.name}`);
-      if (c.name === "bender_dev") {
-        console.log("Setting default channel to: " + `${c.name}`);
-	      default_channel = c.id;
-        bender_dev = c.id;
-      }
-      else if(c.name === "gamblers"){
-        gamblers = c.id;
-      }
+      console.log("Member of channel: " + c.name);
+      channel_ids[c.name] = c.id;
+      //console.log(channel_ids[c.name]);
     }
   }
   console.log("Logged in as " + rtmStartData.self.name + 
@@ -43,22 +36,20 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
               ", but not yet connected to channel");
 });
 
-// successfully connected to RTM
+// Successfully connected to RTM
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
 });
 
 rtm.start();
 
-// Message handler
+// Message event handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   //console.log(message.text);
 
   //ignore non messages with no text
   if(typeof message.text === 'undefined') return;
  
-  var msg = message.text.split(" ");
-  
   var processed_msg = processMessage(message.text);
   var bot_msg;
   
@@ -71,8 +62,7 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
     
     case 1: // ROLL command
       var roll_result = handleRollCommand(processed_msg.die);
-      console.log("Roll results: " + roll_result.rolls);
-      bot_msg = "You rolled:" + roll_result.rolls;
+      bot_msg = roll_result.message;
       postMessage(message.user, bot_msg, message.channel);
       break;
     
@@ -94,8 +84,11 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       postMessage(message.user, bot_msg, message.channel);
       break;
 
+    case 5: // BET command
+      break;
+
     default:
-      if(typeof processed_msg.message !== 'undefined'){
+     if(typeof processed_msg.message !== 'undefined'){
         postMessage(message.user, processed_msg.message, message.channel);
       }
       return;
@@ -183,10 +176,18 @@ function processMessage(msg){
       result["type"] = 3;
     }
 
+    // HELP command
     else if(msg[1].toUpperCase() === "HELP"){
       console.log("Processing HELP command...");
       result["type"] = 4;
     }
+
+    // BET command (does nothing right now)
+    else if(msg[1].toUpperCase() === "BET" && msg.length > 3){
+      console.log("Processing BET command...");i
+      result["type"] = -1;
+    }
+      
   
   }
   // Not a command or anything bot cares about
@@ -207,12 +208,34 @@ function processMessage(msg){
 // returns:
 //   result of roll(s)
 function handleRollCommand(die, times = 1){
-  var result = { rolls : "" };
+  var result = {};
+  var rolls = "";
   for(let i = 0; i < times; i++){
     // Yes, there's an extra space at the beginning. Sue me.
-    result.rolls += " ";
-    result.rolls += Math.floor(Math.random() * die) + 1; 
+    rolls += " ";
+    rolls += Math.floor(Math.random() * die) + 1; 
   }
+
+  result["message"] = "You rolled:" + rolls;
+
+  // special emote mode
+  if(times === 1){
+    console.log("roll: " + rolls);
+    var roll = parseInt(rolls.trim());
+    if(roll === 1){
+      result.message += " :hyperbleh:";
+    }
+    else if(roll === die){
+      result.message += " :partyparrot:";
+    }
+    else if(roll <= die/2){
+      result.message += " :bleh:";
+    }
+    else{
+      result.message += " :ok_hand:";
+    }
+  }
+
   return result;
 }
 
@@ -224,7 +247,7 @@ function handleRollCommand(die, times = 1){
 function handleJoinCommand(user, channel){
   var result = {};
 
-  if(channel !== gamblers && channel !== bender_dev){
+  if(channel !== channel_ids.gamblers && channel !== channel_ids.bender_dev){
     result["message"] = "User not added. Please keep gambling content to " +
                         "<#" + gamblers + ">";
   }
@@ -259,7 +282,8 @@ function handleCheckbuxCommand(user){
   }
   else{
     result["message"] = "You are not currently registered.\n" +
-                        "Please use the JOIN command in <#" + gamblers + ">";
+                        "Please use the JOIN command in " +
+                        "<#" + channel_ids.gamblers + ">";
   }
 
   return result;
