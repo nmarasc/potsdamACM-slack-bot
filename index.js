@@ -138,18 +138,28 @@ function processMessage(msg){
     console.log("\nMention detected, checking for command..");
     
     // ROLL command
-    if(msg[1].toUpperCase() === "ROLL" && msg.length > 2){
+    if((msg[1].toUpperCase() === "ROLL" || msg[1].toUpperCase() === ":GAME_DIE:") && 
+        msg.length > 2){
       console.log("Processing ROLL command...");
       
       var die;
-      
+     
+      // Here lies Adam's case and unreasonable requests
+      if(msg[2] === ":100:"){
+        result["type"] = 1;
+        result["die"] = 100; 
+        return result;
+      }
+
       // get die value to roll
       if(msg[2].toUpperCase().startsWith("D")){ 
-        die = parseInt(msg[2].substring(1)); 
+        die = msg[2].toUpperCase().substring(1);
       }
-      else{ 
-        die = parseInt(msg[2]);
+      else{
+        die = msg[2];
       }
+      if(isInt(die)){ die = parseInt(die); }
+      else{ die = NaN; }
       
       // check for valid roll
       if(isNaN(die) || die < 2){
@@ -184,11 +194,10 @@ function processMessage(msg){
 
     // BET command (does nothing right now)
     else if(msg[1].toUpperCase() === "BET" && msg.length > 3){
-      console.log("Processing BET command...");i
+      console.log("Processing BET command...");
       result["type"] = -1;
     }
-      
-  
+
   }
   // Not a command or anything bot cares about
   else{
@@ -294,6 +303,20 @@ function handleCheckbuxCommand(user){
 // returns: message object
 function handleHelpCommand(){
   return {};
+}
+
+// check for numeric values
+// params: n - value to check
+// returns: true if numeric, false otherwise
+function isNumeric(n){
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+// check for integer value
+// params: n - value to check
+// returns true if int, false otherwise
+function isInt(n){
+  return isNumeric(n) && (parseFloat(n) === parseInt(n));
 }
 
 // make sending messages more simple
