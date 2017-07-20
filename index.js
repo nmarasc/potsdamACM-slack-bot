@@ -151,7 +151,7 @@ function processMessage(msg){
       if(msg[2] === ":100:"){
         result["die"] = "100";
       }
-      // Here lied Jarred's case and unreasonable requests
+      // Here lies Jarred's case and unreasonable requests
       else if(msg[2].toUpperCase() === ":HERB:"){
         result["die"] = "420";
       }
