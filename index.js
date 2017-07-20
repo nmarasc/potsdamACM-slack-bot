@@ -31,7 +31,7 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
       //console.log(channel_ids[c.name]);
     }
   }
-  console.log("Logged in as " + rtmStartData.self.name + 
+  console.log("Logged in as " + rtmStartData.self.name +
               " of team " + rtmStartData.team.name +
               ", but not yet connected to channel");
 });
@@ -39,6 +39,7 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 // Successfully connected to RTM
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
+  rtm.sendMessage("Bender has successfully connected",channel_ids.bender_dev);
 });
 
 rtm.start();
@@ -49,23 +50,23 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
 
   //ignore non messages with no text
   if(typeof message.text === 'undefined') return;
- 
-  var processed_msg = processMessage(message.text);
+
+  var new_msg = processMessage(message.text);
   var bot_msg;
-  
-  switch(processed_msg.type){
-    
+
+  switch(new_msg.type){
+
     case 0: // HI command
       bot_msg = "I'm a Bender. I bend girders. :partyparrot:";
       postMessage(message.user, bot_msg, message.channel);
       break;
-    
+
     case 1: // ROLL command
-      var roll_result = handleRollCommand(processed_msg.die);
+      var roll_result = handleRollCommand(new_msg.die);
       bot_msg = roll_result.message;
       postMessage(message.user, bot_msg, message.channel);
       break;
-    
+
     case 2: // JOIN command
       var join_result = handleJoinCommand(message.user, message.channel);
       bot_msg = join_result.message;
@@ -85,11 +86,13 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       break;
 
     case 5: // BET command
+      var bet_result = handleBetCommand(message.user, message.channel,
+                                        new_msg.game_data);
       break;
 
     default:
-     if(typeof processed_msg.message !== 'undefined'){
-        postMessage(message.user, processed_msg.message, message.channel);
+     if(typeof new_msg.message !== 'undefined'){
+        postMessage(message.user, new_msg.message, message.channel);
       }
       return;
   }
@@ -97,15 +100,15 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
 
 // reaction added handler (doesn't do messages for some godforsaken reason)
 rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
-  console.log("\n" + evnt.reaction + " added to " + 
-	                   evnt.item.type + " by " + 
+  console.log("\n" + evnt.reaction + " added to " +
+	                   evnt.item.type + " by " +
 	                   evnt.user);
   //console.log(evnt.item);
-  
+
   var item = {
     file         : evnt.item.file,
     file_comment : evnt.item.file_comment,
-    channel      : evnt.item.channel, 
+    channel      : evnt.item.channel,
     ts           : evnt.item.ts};
 
   //console.log("channel: " + item.channel + "\nts: " + item.ts);
@@ -121,59 +124,47 @@ rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
 // params:
 //   msg - incoming message
 // returns:
-//   object tailored to commands
+//   object tailored to command
 function processMessage(msg){
   var result = {};
   msg = msg.split(" ");
-  
+
   // Legacy "HI" command
-  if(msg[0].toUpperCase() === "HI" && msg.length > 1){ 
+  if(msg[0].toUpperCase() === "HI" && msg.length > 1){
     if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(bot_id)) {
       result["type"] = 0;
     }
   }
-  
+
   // Start checking for real commands
-  else if(msg[0].includes(bot_id) && msg.length > 1){
+  else if((msg[0].includes(bot_id) || msg[0].toUpperCase() === ":B:") &&
+           msg.length > 1){
     console.log("\nMention detected, checking for command..");
-    
+
     // ROLL command
-    if((msg[1].toUpperCase() === "ROLL" || msg[1].toUpperCase() === ":GAME_DIE:") && 
+    if((msg[1].toUpperCase() === "ROLL" || msg[1].toUpperCase() === ":GAME_DIE:") &&
         msg.length > 2){
       console.log("Processing ROLL command...");
-      
-      var die;
-     
+      result["type"] = 1;
+
       // Here lies Adam's case and unreasonable requests
       if(msg[2] === ":100:"){
-        result["type"] = 1;
-        result["die"] = 100; 
-        return result;
+        result["die"] = "100";
       }
-
-      // get die value to roll
-      if(msg[2].toUpperCase().startsWith("D")){ 
-        die = msg[2].toUpperCase().substring(1);
+      // Here lied Jarred's case and unreasonable requests
+      else if(msg[2].toUpperCase() === ":HERB:"){
+        result["die"] = "420";
       }
+      // trim d off roll if it exists
+      else if(msg[2].toUpperCase().startsWith("D")){
+        result["die"] = msg[2].toUpperCase().substring(1);
+      }
+      // otherwise we good
       else{
-        die = msg[2];
-      }
-      if(isInt(die)){ die = parseInt(die); }
-      else{ die = NaN; }
-      
-      // check for valid roll
-      if(isNaN(die) || die < 2){
-        console.log("Not a valid roll: " + msg[2]);
-        result["type"] = -1;
-        result["message"] = msg[2] + " is not a valid roll.";
-      }
-      else{
-        console.log("Die to roll: " + die);
-        result["type"] = 1;
-        result["die"] = die;
+        result["die"] = msg[2];
       }
     }
-  
+
     // JOIN command
     else if(msg[1].toUpperCase() === "JOIN"){
       console.log("Processing JOIN command...");
@@ -192,10 +183,18 @@ function processMessage(msg){
       result["type"] = 4;
     }
 
-    // BET command (does nothing right now)
+    // BET command
     else if(msg[1].toUpperCase() === "BET" && msg.length > 3){
       console.log("Processing BET command...");
-      result["type"] = -1;
+      result["type"] = 5;
+      result["game_data"] = {};
+      result.game_data["amount"] = msg[2];
+      result.game_data["game"] = msg[3];
+      result.game_data["ops"] = {};
+      for(let i = 4; i < msg.length; i++){
+        result.game_data.ops[("op" + (i-3))] = msg[i];
+      }
+
     }
 
   }
@@ -212,40 +211,75 @@ function processMessage(msg){
 
 // handles roll commands
 // params:
-//   die - upper bound on roll
+//   die_msg - die value to parse
 //   times - number of times to roll (default 1)
 // returns:
 //   result of roll(s)
-function handleRollCommand(die, times = 1){
+function handleRollCommand(die_msg, times = 1){
   var result = {};
   var rolls = "";
-  for(let i = 0; i < times; i++){
-    // Yes, there's an extra space at the beginning. Sue me.
-    rolls += " ";
-    rolls += Math.floor(Math.random() * die) + 1; 
+  var die;
+
+  if(isInt(die_msg)){
+    die = parseInt(die_msg);
+  }
+  else{
+    die = NaN;
   }
 
-  result["message"] = "You rolled:" + rolls;
+  // check for valid roll
+  if(isNaN(die) || die < 2){
+    console.log("Not a valid roll: " + die_msg);
+    result["message"] = die_msg + " is not a valid roll.";
+    return result;
+  }
+
+  console.log("Die to roll: " + die);
+
+  result["message"] = doRoll(die);
+
+  return result;
+}
+
+// do the rolls
+// params:
+//   die - upper bound on roll
+//   times - number of rolls
+// returns: rolls message
+function doRoll(die, times = 1){
+
+  var rolls = [];
+
+  for(let i = 0; i < times; i++){
+    rolls[i] = Math.floor(Math.random() * die) + 1;
+  }
+
+  roll_msg = "You rolled: " + rolls.join(", ");
 
   // special emote mode
   if(times === 1){
-    console.log("roll: " + rolls);
-    var roll = parseInt(rolls.trim());
+    console.log("Roll: " + rolls);
+    var roll = parseInt(rolls[0]);
     if(roll === 1){
-      result.message += " :hyperbleh:";
+      roll_msg += " :hyperbleh:";
+    }
+    else if(roll === 420){ // meme rolls
+      roll_msg += " :herb:";
+    }
+    else if(roll === 69){ // meme rolls
+      roll_msg += " :eggplant:";
     }
     else if(roll === die){
-      result.message += " :partyparrot:";
+      roll_msg += " :partyparrot:";
     }
     else if(roll <= die/2){
-      result.message += " :bleh:";
+      roll_msg += " :bleh:";
     }
     else{
-      result.message += " :ok_hand:";
+      roll_msg += " :ok_hand:";
     }
   }
-
-  return result;
+  return roll_msg;
 }
 
 // handle join command
@@ -260,7 +294,7 @@ function handleJoinCommand(user, channel){
     result["message"] = "User not added. Please keep gambling content to " +
                         "<#" + gamblers + ">";
   }
-  else{ 
+  else{
     console.log("Attemping to add " + user + " to game..");
     if(game.hasOwnProperty(user)){
       result["message"] = "You are already registered.\n" +
@@ -303,6 +337,17 @@ function handleCheckbuxCommand(user){
 // returns: message object
 function handleHelpCommand(){
   return {};
+}
+
+// handle bet command
+// params:
+//  user - incoming user
+//  channel - incoming channel
+//  game_data - data object about the game
+// returns: message object
+function handleBetCommand(user, channel, game_data){
+  var result = {};
+  return result;
 }
 
 // check for numeric values
