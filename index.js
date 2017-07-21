@@ -14,7 +14,9 @@ var web = new WebClient(bot_token);
 // channel ids
 var channel_ids = {};
 // keeps track of scrumbux and people registered
-var game = {};
+var bank = {};
+// available games
+var games = ["COIN","ROLL"];
 // id for the bot
 var bot_id;
 
@@ -39,7 +41,7 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 // Successfully connected to RTM
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
-  rtm.sendMessage("Bender has successfully connected",channel_ids.bender_dev);
+  //rtm.sendMessage("Bender has successfully connected",channel_ids.bender_dev);
 });
 
 rtm.start();
@@ -88,6 +90,8 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
     case 5: // BET command
       var bet_result = handleBetCommand(message.user, message.channel,
                                         new_msg.game_data);
+      bot_msg = bet_result.message;
+      postMessage(message.user, bot_msg, message.channel);
       break;
 
     default:
@@ -236,30 +240,13 @@ function handleRollCommand(die_msg, times = 1){
 
   console.log("Die to roll: " + die);
 
-  result["message"] = doRoll(die);
+  var rolls = doRoll(die);
+  var roll_msg = "You rolled: " + rolls.join(", ");
 
-  return result;
-}
-
-// do the rolls
-// params:
-//   die - upper bound on roll
-//   times - number of rolls
-// returns: rolls message
-function doRoll(die, times = 1){
-
-  var rolls = [];
-
-  for(let i = 0; i < times; i++){
-    rolls[i] = Math.floor(Math.random() * die) + 1;
-  }
-
-  roll_msg = "You rolled: " + rolls.join(", ");
-
-  // special emote mode
+    // special emote mode
   if(times === 1){
-    console.log("Roll: " + rolls);
-    var roll = parseInt(rolls[0]);
+    var roll = rolls[0];
+    console.log("Roll: " + roll);
     if(roll === 1){
       roll_msg += " :hyperbleh:";
     }
@@ -279,7 +266,26 @@ function doRoll(die, times = 1){
       roll_msg += " :ok_hand:";
     }
   }
-  return roll_msg;
+
+  result["message"] = roll_msg;
+
+  return result;
+}
+
+// do the rolls
+// params:
+//   die - upper bound on roll
+//   times - number of rolls
+// returns: rolls
+function doRoll(die, times = 1){
+
+  var rolls = [];
+
+  for(let i = 0; i < times; i++){
+    rolls[i] = Math.floor(Math.random() * die) + 1;
+  }
+
+  return rolls;
 }
 
 // handle join command
@@ -295,19 +301,19 @@ function handleJoinCommand(user, channel){
                         "<#" + gamblers + ">";
   }
   else{
-    console.log("Attemping to add " + user + " to game..");
-    if(game.hasOwnProperty(user)){
+    console.log("Attemping to add " + user + " to bank..");
+    if(bank.hasOwnProperty(user)){
       result["message"] = "You are already registered.\n" +
-                          "You currently have: " + game[user] + " scrumbux";
+                          "You currently have: " + bank[user] + " scrumbux";
 
       console.log("User " + user + " already exists");
     }
     else{
-      game[user] = 100;
+      bank[user] = 100;
       result["message"] = "You have been registered.\n" +
-                          "You currently have: " + game[user] + " scrumbux";
+                          "You currently have: " + bank[user] + " scrumbux";
 
-      console.log("User " + user + " has successfully joined game");
+      console.log("User " + user + " has successfully joined bank");
     }
     return result;
   }
@@ -320,8 +326,8 @@ function handleJoinCommand(user, channel){
 function handleCheckbuxCommand(user){
   var result = {};
 
-  if(game.hasOwnProperty(user)){
-    result["message"] = "You currently have: " + game[user] + " scrumbux";
+  if(bank.hasOwnProperty(user)){
+    result["message"] = "You currently have: " + bank[user] + " scrumbux";
   }
   else{
     result["message"] = "You are not currently registered.\n" +
@@ -345,8 +351,90 @@ function handleHelpCommand(){
 //  channel - incoming channel
 //  game_data - data object about the game
 // returns: message object
+
+// ISSUES:
+//  No way to get money once you run out
+//  Can go negative
+//  Overflowing account
+//  No emoji bets
+//  No scaling of rewards with risk
 function handleBetCommand(user, channel, game_data){
   var result = {};
+
+  // check valid channel
+  if(channel !== channel_ids.gamblers && channel !== channel_ids.bender_dev){
+    result.message = "Betting not allowed in this channel.\n" +
+                     "Please keep gambling content to " + "<#" + channel_ids.gamblers + ">";
+    return result;
+  }
+  // check if user is in bank
+  if(!bank.hasOwnProperty(user)){
+    result.message = "You are not currently registered.\n" +
+                     "Please use the JOIN command in " +
+                     "<#" + channel_ids.gamblers + ">";
+    return result;
+  }
+
+  var amount;
+  var game;
+
+
+  // parse betting amount
+  if(isInt(game_data.amount) && parseInt(game_data.amount) > 0){
+    amount = parseInt(game_data.amount);
+  }
+  else{
+    result.message = game_data.amount + " is not a valid betting amount";
+    return result;
+  }
+
+  // check game type
+  game = games.indexOf(game_data.game.toUpperCase());
+  switch(game){
+
+    case 0 : // COIN game
+      var win_val = game_data.ops.op1.toUpperCase();
+      //console.log("Win: " + win_val);
+      if(win_val === "HEADS" || win_val === "H"){
+        win_val = 1;
+      }
+      else if(win_val === "TAILS" || win_val === "T"){
+        win_val = 2;
+      }
+      else{
+        result.message = game_data.ops.op1 + " is not a valid option for COIN game";
+        return result;
+      }
+
+      if(amount <= bank[user]){
+        var roll = doRoll(2)[0];
+        result.message = "You got: ";
+        if(roll === 1){ result.message += "HEADS\n"; }
+        else{ result.message += "TAILS\n"; }
+
+        if(roll === win_val){
+          result.message += "You win! You've earned " + (amount*2) + " scrumbux!";
+          bank[user] += amount*2;
+        }
+        else{
+          result.message += "You lost. You're down " + amount + " scrumbux.";
+          bank[user] -= amount;
+        }
+      }
+      else{
+        result.message = "You do not have enough scrumbux to bet that amount\n" +
+                         "You currently have " + bank[user] + " scrumbux";
+      }
+      break;
+
+    case 1 : // ROLL game
+      break;
+
+    default :
+      result.message = game_data.game + " is not a recognized game type";
+      return result;
+  }
+
   return result;
 }
 
