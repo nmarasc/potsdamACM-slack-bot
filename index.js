@@ -41,7 +41,7 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 // Successfully connected to RTM
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
-  //rtm.sendMessage("Bender has successfully connected",channel_ids.bender_dev);
+  rtm.sendMessage("Bender has successfully connected",channel_ids.bender_dev);
 });
 
 rtm.start();
@@ -419,6 +419,9 @@ function handleBetCommand(user, channel, game_data){
         else{
           result.message += "You lost. You're down " + amount + " scrumbux.";
           bank[user] -= amount;
+
+          // quick and dirty fix for negative amounts, long term solution later
+          if(bank[user] < 1){ bank[user] = 1; }
         }
       }
       else{
