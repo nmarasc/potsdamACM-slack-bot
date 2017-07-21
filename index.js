@@ -151,13 +151,9 @@ function processMessage(msg){
       console.log("Processing ROLL command...");
       result["type"] = 1;
 
-      // Here lies Adam's case and unreasonable requests
-      if(msg[2] === ":100:"){
-        result["die"] = "100";
-      }
-      // Here lies Jarred's case and unreasonable requests
-      else if(msg[2].toUpperCase() === ":HERB:"){
-        result["die"] = "420";
+      // Adam and Jarred have made this necessary
+      if(isMeme(msg[2])){
+        result["die"] = parseMeme(msg[2]);
       }
       // trim d off roll if it exists
       else if(msg[2].toUpperCase().startsWith("D")){
@@ -383,6 +379,9 @@ function handleBetCommand(user, channel, game_data){
   if(isInt(game_data.amount) && parseInt(game_data.amount) > 0){
     amount = parseInt(game_data.amount);
   }
+  else if(isMeme(game_data.amount)){
+    amount = parseMeme(game_data.amount);
+  }
   else{
     result.message = game_data.amount + " is not a valid betting amount";
     return result;
@@ -453,6 +452,27 @@ function isNumeric(n){
 // returns true if int, false otherwise
 function isInt(n){
   return isNumeric(n) && (parseFloat(n) === parseInt(n));
+}
+
+// check for meme value
+// params: meme_msg - potential meme value
+// returns true if meme, false otherwise
+function isMeme(meme_msg){
+  return (meme_msg === ":100:" || meme_msg.toUpperCase() === ":HERB:");
+}
+
+// parse meme value
+// params: meme_msg - meme value
+// returns: numeric value of meme
+function parseMeme(meme_msg){
+  switch(meme_msg.toUpperCase()){
+    case ":100:" :
+      return 100;
+    case ":HERB:" :
+      return 420;
+    default :
+      return NaN;
+  }
 }
 
 // make sending messages more simple
