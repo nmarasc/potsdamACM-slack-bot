@@ -17,6 +17,8 @@ var channel_ids = {};
 var bank = {};
 // available games
 var games = ["COIN","ROLL"];
+// current commands
+var commands = ["ROLL","JOIN","CHECKBUX","BET","COMMANDS"];
 // id for the bot
 var bot_id;
 
@@ -82,8 +84,8 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       break;
 
     case 4: // HELP command
-      //var help_result = handleHelpCommand();
-      bot_msg = "Bite my shiny metal ass";
+      var help_result = handleHelpCommand(new_msg.command);
+      bot_msg = help_result.message;
       postMessage(message.user, bot_msg, message.channel);
       break;
 
@@ -91,6 +93,13 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
       var bet_result = handleBetCommand(message.user, message.channel,
                                         new_msg.game_data);
       bot_msg = bet_result.message;
+      postMessage(message.user, bot_msg, message.channel);
+      break;
+
+    case 6: // COMMANDS command
+      bot_msg = "The current supported commands are: ";
+      bot_msg += commands.join(", ");
+      bot_msg += "\n(When it's done) Use HELP <command-name> for details"
       postMessage(message.user, bot_msg, message.channel);
       break;
 
@@ -194,7 +203,12 @@ function processMessage(msg){
       for(let i = 4; i < msg.length; i++){
         result.game_data.ops[("op" + (i-3))] = msg[i];
       }
+    }
 
+    // COMMANDS command
+    else if(msg[1].toUpperCase() === "COMMANDS"){
+      console.log("Processing COMMANDS command...");
+      result["type"] = 6;
     }
 
   }
@@ -335,10 +349,18 @@ function handleCheckbuxCommand(user){
 }
 
 // handle help command
-// params: none
+// params:
+//  command - command to get details of
 // returns: message object
-function handleHelpCommand(){
-  return {};
+function handleHelpCommand(command){
+  result = {};
+  if(typeof command !== 'undefined'){
+    result["message"] = "No, it's not finished. Go away. :bleh:";
+  }
+  else{
+    result["message"] = "Bite my shiny metal ass";
+  }
+  return result;
 }
 
 // handle bet command
@@ -392,6 +414,7 @@ function handleBetCommand(user, channel, game_data){
   switch(game){
 
     case 0 : // COIN game
+      if(typeof game_data.ops.op1 === 'undefined'){ game_data.ops.op1 = ""; }
       var win_val = game_data.ops.op1.toUpperCase();
       //console.log("Win: " + win_val);
       if(win_val === "HEADS" || win_val === "H"){
@@ -406,6 +429,7 @@ function handleBetCommand(user, channel, game_data){
       }
 
       if(amount <= bank[user]){
+        bank[user] -= amount;
         var roll = doRoll(2)[0];
         result.message = "You got: ";
         if(roll === 1){ result.message += "HEADS\n"; }
@@ -417,8 +441,6 @@ function handleBetCommand(user, channel, game_data){
         }
         else{
           result.message += "You lost. You're down " + amount + " scrumbux.";
-          bank[user] -= amount;
-
           // quick and dirty fix for negative amounts, long term solution later
           if(bank[user] < 1){ bank[user] = 1; }
         }
