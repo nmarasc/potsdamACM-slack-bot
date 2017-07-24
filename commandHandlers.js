@@ -176,8 +176,8 @@ exports.command_handler.joinHandler = function joinHandler(user, channel, opts){
   var bank = opts.bank;
 
   if(channel !== channel_ids.gamblers && channel !== channel_ids.bender_dev){
-    result["message"] = "User not added. Please keep gambling content to " +
-                        "<#" + gamblers + ">";
+    result["message"] = "Cannot join. Please keep gambling content to " +
+                        "<#" + channel_ids.gamblers + ">";
   }
   else{
     console.log("Attemping to add " + user + " to bank..");
@@ -194,8 +194,8 @@ exports.command_handler.joinHandler = function joinHandler(user, channel, opts){
 
       console.log("User " + user + " has successfully joined bank");
     }
-    return result;
   }
+  return result;
 }
 
 // handle checkbux command
