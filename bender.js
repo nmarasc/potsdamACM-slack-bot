@@ -20,7 +20,7 @@ function Bender(rtm, web, opts){
 
   this.bank = {};
   this.games = ["COIN","ROLL"];
-  this.commands = ["ROLL","JOIN","CHECKBUX","BET","COMMANDS"];
+  this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS"];
 }
 
 /**
@@ -69,7 +69,14 @@ Bender.prototype.bend = function bend(msg, user, channel){
       break;
 
     case 4: // HELP command
-      var help_result = command_handler.helpHandler(proc_msg.command);
+      var help_opts = {};
+      help_opts["commands"] = this.commands;
+      help_opts["games"] = this.games;
+      help_opts["channel_ids"] = this.channel_ids;
+      help_opts["bot_id"] = this.bot_id;
+      var help_result = command_handler.helpHandler(proc_msg.command,
+                                                    proc_msg.sub_command,
+                                                    help_opts);
       bot_msg = help_result.message;
       this._postMessage(user, bot_msg, channel);
       break;
@@ -157,6 +164,12 @@ Bender.prototype._processMessage = function _processMessage(msg){
     // HELP command
     else if(msg[1].toUpperCase() === "HELP"){
       console.log("Processing HELP command...");
+      if(msg.length > 2){
+        result["command"] = msg[2];
+      }
+      if(msg.length > 3){
+        result["sub_command"] = msg[3];
+      }
       result["type"] = 4;
     }
 
