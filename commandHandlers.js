@@ -8,7 +8,7 @@ exports.command_handler = {};
 //   times - number of times to roll (default 1)
 // returns:
 //   result of roll(s)
-exports.command_handler.rollHandler = function rollHandler(die_msg, times = 1){
+exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
   var result = {};
   var rolls = "";
   var die;
@@ -19,6 +19,12 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times = 1){
   else{
     die = NaN;
   }
+  if(util.isInt(times_msg)){
+    times = parseInt(times_msg);
+  }
+  else{
+    times = NaN;
+  }
 
   // check for valid roll
   if(isNaN(die) || die < 2){
@@ -26,10 +32,16 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times = 1){
     result["message"] = die_msg + " is not a valid roll.";
     return result;
   }
+  if(isNaN(times) || times < 1 || times > 10){
+    console.log("Not a valid times: " + times_msg);
+    result["message"] = times_msg + " is not a valid number of rolls.\n" +
+                                    "Must be a number between 1 and 10";
+    return result;
+  }
 
   console.log("Die to roll: " + die);
 
-  var rolls = _doRoll(die);
+  var rolls = _doRoll(die,times);
   var roll_msg = "You rolled: " + rolls.join(", ");
 
     // special emote mode
@@ -54,6 +66,10 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times = 1){
     else{
       roll_msg += " :ok_hand:";
     }
+  }
+  else{
+    var total = rolls.reduce(function(a, b){ return a+b; },0);
+    roll_msg += "\nTotal: " + total;
   }
 
   result["message"] = roll_msg;
@@ -133,7 +149,7 @@ exports.command_handler.betHandler = function betHandler(user, channel, opts){
 
       if(amount <= bank[user]){
         bank[user] -= amount;
-        var roll = _doRoll(2)[0];
+        var roll = _doRoll(2,1)[0];
         result.message = "You got: ";
         if(roll === 1){ result.message += "HEADS\n"; }
         else{ result.message += "TAILS\n"; }
@@ -241,7 +257,9 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 
     case 0 : // ROLL
       result["message"] = "To use ROLL command:\n" +
-                          "<@" + bot_id + "> ROLL <die-size>";
+                          "Where X is die-size and Y is number-of-dice\n" +
+                          "<@" + bot_id + "> ROLL X\n" +
+                          "<@" + bot_id + "> ROLL YdX";
       break;
 
     case 1 : // JOIN
@@ -310,7 +328,7 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 //   die - upper bound on roll
 //   times - number of rolls
 // returns: rolls
-function _doRoll(die, times = 1){
+function _doRoll(die, times){
 
   var rolls = [];
 

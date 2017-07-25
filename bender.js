@@ -34,7 +34,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
   //ignore non messages with no text
   if(typeof msg === 'undefined') return;
 
-  var proc_msg = this._processMessage(msg);
+  var proc_msg = this._processMessage(msg.trim());
   var bot_msg;
 
   switch(proc_msg.type){
@@ -45,7 +45,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
       break;
 
     case 1: // ROLL command
-      var roll_result = command_handler.rollHandler(proc_msg.die);
+      var roll_result = command_handler.rollHandler(proc_msg.die, proc_msg.times);
       bot_msg = roll_result.message;
       this._postMessage(user, bot_msg, channel);
       break;
@@ -138,14 +138,23 @@ Bender.prototype._processMessage = function _processMessage(msg){
       // Adam and Jarred have made this necessary
       if(util.isMeme(msg[2])){
         result["die"] = util.parseMeme(msg[2]);
+        result["times"] = "1";
       }
       // trim d off roll if it exists
-      else if(msg[2].toUpperCase().startsWith("D")){
-        result["die"] = msg[2].toUpperCase().substring(1);
+      else if(/\d+d\d+/i.exec(msg[2]) !== null){
+        var mult_roll = msg[2].toUpperCase().split("D");
+        if(mult_roll.length === 2){
+          result["die"] = mult_roll[1];
+          result["times"] = mult_roll[0];
+        }
+        else{
+          result["die"] = msg[2];
+        }
       }
       // otherwise we good
       else{
         result["die"] = msg[2];
+        result["times"] = "1";
       }
     }
 
