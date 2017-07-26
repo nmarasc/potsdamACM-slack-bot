@@ -135,24 +135,22 @@ Bender.prototype._processMessage = function _processMessage(msg){
       console.log("Processing ROLL command...");
       result["type"] = 1;
 
-      // Adam and Jarred have made this necessary
-      if(util.isMeme(msg[2])){
-        result["die"] = util.parseMeme(msg[2]);
-        result["times"] = "1";
-      }
-      // trim d off roll if it exists
-      else if(/\d+d\d+/i.exec(msg[2]) !== null){
-        var mult_roll = msg[2].toUpperCase().split("D");
-        if(mult_roll.length === 2){
-          result["die"] = mult_roll[1];
-          result["times"] = mult_roll[0];
+      // this monstrosity hits all d cases
+      if(/^((:[a-z0-9_-]+:)|\d+)?d((:[a-z0-9_-]+:)|\d+)$/i.test(msg[2])){
+        var split_roll = util.memeSafeSplit(msg[2].toUpperCase(),"D");
+        //console.log(split_roll);
+
+        if(split_roll[0] === ''){ // dX roll
+          result["times"] = 1;
         }
-        else{
-          result["die"] = msg[2];
+        else{ // YdX roll
+          result["times"] = split_roll[0];
         }
+        result["die"] = split_roll[1];
+
       }
-      // otherwise we good
-      else{
+      else{ // non d cases just toss it to the handler
+
         result["die"] = msg[2];
         result["times"] = "1";
       }

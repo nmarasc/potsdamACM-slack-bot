@@ -34,3 +34,27 @@ exports.util.parseMeme = function parseMeme(meme_msg){
       return NaN;
   }
 }
+
+// split while preserving memes
+// I hate everything
+exports.util.memeSafeSplit = function memeSafeSplit(msg, delim){
+  var result = [];
+  var token = "";
+  for(var i = 0; i < msg.length; i++){
+    if(msg.charAt(i) === delim){
+      result[result.length] = token;
+      token = "";
+    }
+    else {
+      if(msg.charAt(i) === ":"){
+        token += msg.charAt(i++);
+        while(msg.charAt(i) !== ":"){
+          token += msg.charAt(i++);
+        }
+      }
+      token += msg.charAt(i);
+    }
+  }
+  result[result.length] = token;
+  return result;
+}

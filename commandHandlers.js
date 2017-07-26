@@ -16,11 +16,18 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
   if(util.isInt(die_msg)){
     die = parseInt(die_msg);
   }
+  else if(util.isMeme(die_msg)){
+    die = util.parseMeme(die_msg);
+  }
   else{
     die = NaN;
   }
+
   if(util.isInt(times_msg)){
     times = parseInt(times_msg);
+  }
+  else if(util.isMeme(times_msg)){
+    times = util.parseMeme(times_msg);
   }
   else{
     times = NaN;
