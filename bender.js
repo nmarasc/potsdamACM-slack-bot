@@ -34,7 +34,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
   //ignore non messages with no text
   if(typeof msg === 'undefined') return;
 
-  console.log(msg);
+//   console.log(msg);
 
   var proc_msg = this._processMessage(msg.trim());
   var bot_msg;
