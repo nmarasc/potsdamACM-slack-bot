@@ -282,9 +282,8 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 
     case 0 : // ROLL
       result["message"] = "To use ROLL command:\n" +
-                          "Where X is die-size and Y is number-of-dice\n" +
-                          "<@" + bot_id + "> ROLL X\n" +
-                          "<@" + bot_id + "> ROLL YdX";
+                          "<@" + bot_id + "> ROLL ( [d]X | YdX )\n" +
+                          "Where X is <die-size> and Y is <num-of-dice>";
       break;
 
     case 1 : // JOIN
@@ -295,8 +294,7 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 
     case 2 : // CHECKBUX
       result["message"] = "To use CHECKBUX command:\n" +
-                          "<@" + bot_id + "> CHECKBUX\n" +
-                          "<@" + bot_id + "> CHECKBUX <user>";
+                          "<@" + bot_id + "> CHECKBUX [<user>]";
       break;
 
     case 3 : // HELP
