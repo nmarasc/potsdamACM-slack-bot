@@ -34,6 +34,8 @@ Bender.prototype.bend = function bend(msg, user, channel){
   //ignore non messages with no text
   if(typeof msg === 'undefined') return;
 
+  console.log(msg);
+
   var proc_msg = this._processMessage(msg.trim());
   var bot_msg;
 
@@ -63,6 +65,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
       var checkbux_opts = {};
       checkbux_opts["channel_ids"] = this.channel_ids;
       checkbux_opts["bank"] = this.bank;
+      checkbux_opts["target"] = proc_msg.user;
       var checkbux_result = command_handler.checkbuxHandler(user, checkbux_opts);
       bot_msg = checkbux_result.message;
       this._postMessage(user, bot_msg, channel);
@@ -166,6 +169,9 @@ Bender.prototype._processMessage = function _processMessage(msg){
     else if(msg[1].toUpperCase() === "CHECKBUX"){
       console.log("Processing CHECKBUX command...");
       result["type"] = 3;
+      if(msg.length > 2){
+        result["user"] = msg[2];
+      }
     }
 
     // HELP command

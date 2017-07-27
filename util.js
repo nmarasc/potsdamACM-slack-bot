@@ -58,3 +58,8 @@ exports.util.memeSafeSplit = function memeSafeSplit(msg, delim){
   result[result.length] = token;
   return result;
 }
+
+// check for valid user id format
+exports.util.validUserID = function validUserID(id_str){
+  return /^<@U[A-Z0-9]{8}>$/.test(id_str);
+}
