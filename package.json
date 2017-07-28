@@ -4,6 +4,7 @@
   "description": "SUNY Potsdam ACM slack bot",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"No tests yet. Oh well.\""
   },
   "author": "",
