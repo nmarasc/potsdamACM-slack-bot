@@ -178,6 +178,60 @@ exports.command_handler.betHandler = function betHandler(user, channel, opts){
       break;
 
     case 1 : // ROLL game
+      if(typeof game_data.ops.op1 === 'undefined'){ game_data.ops.op1 = "";}
+      if(typeof game_data.ops.op2 === 'undefined'){ game_data.ops.op2 = "";}
+
+      var die;
+      var win_val;
+      // check for valid die
+      if(util.isInt(game_data.ops.op1)){
+        die = parseInt(game_data.ops.op1);
+      }
+      else if(util.isMeme(game_data.ops.op1)){
+        die = parseMeme(game_data.ops.op1);
+      }
+      else{
+        result.message = game_data.ops.op1 + " is not a valid die";
+        return result;
+      }
+
+      // check for valid win value
+      if(util.isInt(game_data.ops.op2)){
+        win_val = parseInt(game_data.ops.op2);
+      }
+      else if(util.isMeme(game_data.ops.op2)){
+        win_val = util.parseMeme(game_data.ops.op2);
+      }
+      else{
+        result.message = game_data.ops.op2 + " is not a valid minimum win value";
+        return result;
+      }
+
+      // check for "fairness"
+      if(win_val < (die/2)){
+        result.message = "Odds must not be in your favor, cheater :hyperbleh:";
+        return result;
+      }
+
+      // think we can play now
+      if(amount <= bank[user]){
+        bank[user] -= amount;
+        var roll = _doRoll(die,1)[0];
+        result.message = "You got: " + roll + "\n";
+        if(roll >= win_val){ // win
+          result.message += "You win! You\'ve earned " + (amount*2) + " scrumbux!";
+          bank[user] += (amount*2);
+        }
+        else{ // lose
+          result.message += "You lost. You\'re down " + amount + " scrumbux";
+          if(bank[user] < 1){ bank[user] = 1; }
+        }
+      }
+      else{
+        result.message = "You do not have enough scrumbux to bet that amount\n" +
+                         "You currently have " + bank[user] + " scrumbux";
+      }
+
       break;
 
     default :
@@ -260,6 +314,15 @@ exports.command_handler.checkbuxHandler = function checkbuxHandler(user, opts){
   return result;
 }
 
+// handle coin command
+exports.command_handler.coinHandler = function coinHandler(){
+  var result = {};
+  result["message"] = "You got: ";
+  var roll = _doRoll(2,1)[0];
+  result["message"] += roll === 1 ? "HEADS" : "TAILS";
+  return result;
+}
+
 // handle help command
 // params:
 //  command - command to get details of
@@ -321,9 +384,6 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
             result["message"] = "Options for ROLL game:\n" +
                                 "  Op1 : <die-size>\n" +
                                 "  Op2 : <min-win-value>\n";
-
-            // delete next line when roll is done
-            result["message"] = "ROLL game is not implemented yet";
             break;
 
           default: // Unknown game
@@ -340,6 +400,12 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
                           "C\'mon, it\'s not that hard";
       break;
 
+    case 6 : // COIN
+      result["message"] = "To use COIN command:\n" +
+                          "<@" + bot_id + "> COIN\n" +
+                          "C\'mon, it\'s not that hard";
+      break;
+
     default : // Unknown command
       result["message"] = command + " is not a recognized command";
       break;
@@ -353,12 +419,15 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 //   times - number of rolls
 // returns: rolls
 function _doRoll(die, times){
+  console.log("Rolling " + die + " " + times + " times");
 
   var rolls = [];
 
   for(let i = 0; i < times; i++){
     rolls[i] = Math.floor(Math.random() * die) + 1;
   }
+
+  console.log("Results: " + rolls);
 
   return rolls;
 }

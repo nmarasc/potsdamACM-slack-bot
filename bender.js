@@ -20,7 +20,7 @@ function Bender(rtm, web, opts){
 
   this.bank = {};
   this.games = ["COIN","ROLL"];
-  this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS"];
+  this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS","COIN"];
 }
 
 /**
@@ -99,6 +99,12 @@ Bender.prototype.bend = function bend(msg, user, channel){
       bot_msg = "The current supported commands are: ";
       bot_msg += this.commands.join(", ");
       bot_msg += "\nUse HELP <command-name> for details"
+      this._postMessage(user, bot_msg, channel);
+      break;
+
+    case 7: // COIN
+      var coin_result = command_handler.coinHandler();
+      bot_msg = coin_result.message;
       this._postMessage(user, bot_msg, channel);
       break;
 
@@ -203,6 +209,17 @@ Bender.prototype._processMessage = function _processMessage(msg){
     else if(msg[1].toUpperCase() === "COMMANDS"){
       console.log("Processing COMMANDS command...");
       result["type"] = 6;
+    }
+
+    // COIN command
+    else if(msg[1].toUpperCase() === 'COIN'){
+      console.log("Processing COIN command...");
+      result["type"] = 7;
+    }
+
+    // none found
+    else{
+      console.log("No command found");
     }
 
   }
