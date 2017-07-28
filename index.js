@@ -1,3 +1,4 @@
+require('dotenv').config();
 // Api imports
 var RtmClient = require('@slack/client').RtmClient;
 var WebClient = require('@slack/client').WebClient;
