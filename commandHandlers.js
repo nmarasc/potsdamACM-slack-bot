@@ -2,17 +2,18 @@ var util = require('./util.js').util;
 
 exports.command_handler = {};
 
-// handles roll commands
-// params:
-//   die_msg - die value to parse
-//   times - number of times to roll (default 1)
-// returns:
-//   result of roll(s)
+/**
+ * Handles roll commands
+ * @param {String} die_msg - message containing the value to roll
+ * @param {String} times_msg - message containing the number of times to roll
+ * @returns {Object} - object containing the message to report
+ */
 exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
   var result = {};
   var rolls = "";
   var die;
 
+  // parse die value
   if(util.isInt(die_msg)){
     die = parseInt(die_msg);
   }
@@ -23,6 +24,7 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
     die = NaN;
   }
 
+  // parse times value
   if(util.isInt(times_msg)){
     times = parseInt(times_msg);
   }
@@ -51,7 +53,7 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
   var rolls = _doRoll(die,times);
   var roll_msg = "You rolled: " + rolls.join(", ");
 
-    // special emote mode
+  // special emote mode
   if(times === 1){
     var roll = rolls[0];
     console.log("Roll: " + roll);
@@ -92,11 +94,13 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
 // returns: message object
 
 // ISSUES:
-//  No way to get money once you run out
-//  Can go negative
 //  Overflowing account
-//  No emoji bets
 //  No scaling of rewards with risk
+/**
+ * Handle bet command
+ * @param {String} user - incoming user
+ * @param {String} channel - incoming channel
+ */
 exports.command_handler.betHandler = function betHandler(user, channel, opts){
   var result = {};
   var channel_ids = opts.channel_ids;
@@ -188,7 +192,7 @@ exports.command_handler.betHandler = function betHandler(user, channel, opts){
         die = parseInt(game_data.ops.op1);
       }
       else if(util.isMeme(game_data.ops.op1)){
-        die = parseMeme(game_data.ops.op1);
+        die = util.parseMeme(game_data.ops.op1);
       }
       else{
         result.message = game_data.ops.op1 + " is not a valid die";
