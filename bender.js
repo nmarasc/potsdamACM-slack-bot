@@ -118,8 +118,8 @@ Bender.prototype.bend = function bend(msg, user, channel){
 
 /**
  * Process incoming message into command handler friendly objects
- * @param {string} msg - incoming message to process
- * @returns {object} - object containing properties required by command handlers
+ * @param {String} msg - incoming message to process
+ * @returns {Object} - object containing properties required by command handlers
  * @private
  */
 Bender.prototype._processMessage = function _processMessage(msg){
