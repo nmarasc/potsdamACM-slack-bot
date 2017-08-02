@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "SUNY Potsdam ACM slack bot",
   "main": "index.js",
+  "repository": "https://github.com/NicholasMarasco/potsdamACM-slack-bot",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"No tests yet. Oh well.\""
@@ -12,8 +13,5 @@
   "dependencies": {
     "@slack/client": "^3.10.0",
     "dotenv": "^4.0.0"
-  },
-  "devDependencies": {
-    "nodemon": "^1.11.0"
   }
 }
