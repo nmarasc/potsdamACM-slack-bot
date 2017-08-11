@@ -418,6 +418,11 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
                           "C\'mon, it\'s not that hard";
       break;
 
+    case 7 : // 8BALL
+      result["message"] = "To use 8BALL command:\n" +
+                          "<@" + bot_id + "> 8BALL\n";
+      break;
+
     default : // Unknown command
       result["message"] = command + " is not a recognized command";
       break;

@@ -20,7 +20,7 @@ function Bender(rtm, web, opts){
 
   this.bank = {};
   this.games = ["COIN","ROLL"];
-  this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS","COIN"];
+  this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS","COIN","8BALL"];
 }
 
 /**
