@@ -109,8 +109,8 @@ Bender.prototype.bend = function bend(msg, user, channel){
       break;
 
     case 8: // 8BALL
-      var 8ball_result = command_handler.8ballHandler();
-      bot_msg = 8ball_result.message;
+      var eightball_result = command_handler.eightballHandler();
+      bot_msg = eightball_result.message;
       this._postMessage(user, bot_msg, channel);
       break;
 

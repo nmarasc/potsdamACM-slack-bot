@@ -328,10 +328,10 @@ exports.command_handler.coinHandler = function coinHandler(){
 }
 
 // handle 8ball command
-exports.command_handler.8ballHandler = function 8ballHandler(){
+exports.command_handler.eightballHandler = function eightballHandler(){
   var result = {};
   var roll = _doRoll(20,1)[0];
-  result["message"] = util.8ballmsg[roll-1];
+  result["message"] = util.eightball_msg[roll-1];
   return result;
 }
 
