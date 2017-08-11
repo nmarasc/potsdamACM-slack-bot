@@ -327,6 +327,14 @@ exports.command_handler.coinHandler = function coinHandler(){
   return result;
 }
 
+// handle 8ball command
+exports.command_handler.8ballHandler = function 8ballHandler(){
+  var result = {};
+  var roll = _doRoll(20,1)[0];
+  result["message"] = util.8ballmsg[roll-1];
+  return result;
+}
+
 // handle help command
 // params:
 //  command - command to get details of

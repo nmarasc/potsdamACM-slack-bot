@@ -108,6 +108,12 @@ Bender.prototype.bend = function bend(msg, user, channel){
       this._postMessage(user, bot_msg, channel);
       break;
 
+    case 8: // 8BALL
+      var 8ball_result = command_handler.8ballHandler();
+      bot_msg = 8ball_result.message;
+      this._postMessage(user, bot_msg, channel);
+      break;
+
     default:
      if(typeof proc_msg.message !== 'undefined'){
         this._postMessage(user, proc_msg.message, channel);
@@ -215,6 +221,12 @@ Bender.prototype._processMessage = function _processMessage(msg){
     else if(msg[1].toUpperCase() === 'COIN'){
       console.log("Processing COIN command...");
       result["type"] = 7;
+    }
+
+    // 8BALL command
+    else if(msg[1].toUpperCase() === '8BALL' || msg[1].toUpperCase() === ':8BALL:'){
+      console.log("Processing 8BALL command...");
+      result["type"] = 8;
     }
 
     // none found
