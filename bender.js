@@ -1,3 +1,6 @@
+// commit 1 for Edward
+
+
 var command_handler = require("./commandHandlers").command_handler;
 var util = require("./util.js").util;
 
