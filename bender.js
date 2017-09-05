@@ -139,7 +139,8 @@ Bender.prototype._processMessage = function _processMessage(msg){
 
   // Legacy "HI" command
   if(msg[0].toUpperCase() === "HI" && msg.length > 1){
-    if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(this.bot_id)) {
+    if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(this.bot_id) ||
+       msg[1].toUpperCase() === ":B:") {
       result["type"] = 0;
     }
   }
