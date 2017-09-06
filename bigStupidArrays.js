@@ -1,6 +1,6 @@
 exports.emotes = [
   ":bleh:",
-  ":partparrot:".
+  ":partparrot:",
   ":wink:",
   ":mage:",
   ":sweat_drops:",
