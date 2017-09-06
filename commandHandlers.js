@@ -335,6 +335,14 @@ exports.command_handler.eightballHandler = function eightballHandler(){
   return result;
 }
 
+// handle fortune command
+exports.command_handler.fortuneHandler = function fortuneHandler(){
+  var result = {};
+  var roll = _doRoll(util.quotes.length,1)[0];
+  result["message"] = util.quotes[roll-1] + "...in bed";
+  return result;
+}
+
 // handle help command
 // params:
 //  command - command to get details of

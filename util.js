@@ -1,5 +1,7 @@
 exports.util = {};
 
+exports.util.quotes = require("./quotes.js").quotes;
+
 exports.util.eightball_msg = [
   "It is certain",
   "It is decidedly so",

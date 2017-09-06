@@ -1,8 +1,3 @@
-// commit 1 for Edward
-// commit 2 for Edward
-// commit 3 for Edward
-
-
 var command_handler = require("./commandHandlers").command_handler;
 var util = require("./util.js").util;
 
@@ -116,6 +111,12 @@ Bender.prototype.bend = function bend(msg, user, channel){
     case 8: // 8BALL
       var eightball_result = command_handler.eightballHandler();
       bot_msg = eightball_result.message;
+      this._postMessage(user, bot_msg, channel);
+      break;
+
+    case 9: // FORTUNE
+      var fortune_result = command_handler.fortuneHandler();
+      bot_msg = fortune_result.message;
       this._postMessage(user, bot_msg, channel);
       break;
 
@@ -233,6 +234,12 @@ Bender.prototype._processMessage = function _processMessage(msg){
     else if(msg[1].toUpperCase() === '8BALL' || msg[1].toUpperCase() === ':8BALL:'){
       console.log("Processing 8BALL command...");
       result["type"] = 8;
+    }
+
+    // FORTUNE command
+    else if(msg[1].toUpperCase() === 'FORTUNE'){
+      console.log("Processing FORTUNE command...");
+      result["type"] = 9;
     }
 
     // none found
