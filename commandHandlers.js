@@ -339,7 +339,9 @@ exports.command_handler.eightballHandler = function eightballHandler(){
 exports.command_handler.fortuneHandler = function fortuneHandler(){
   var result = {};
   var roll = _doRoll(util.quotes.length,1)[0];
-  result["message"] = util.quotes[roll-1] + "...in bed";
+  result["message"] = util.quotes[roll-1] + "...in bed ";
+  roll = _doRoll(util.emotes.length,1)[0];
+  result["message"] += util.emotes[roll-1];
   return result;
 }
 
