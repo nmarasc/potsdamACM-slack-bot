@@ -237,7 +237,8 @@ Bender.prototype._processMessage = function _processMessage(msg){
     }
 
     // FORTUNE command
-    else if(msg[1].toUpperCase() === 'FORTUNE'){
+    else if(msg[1].toUpperCase() === 'FORTUNE' ||
+            msg[1].toUpperCase() === ':FORTUNE:'){
       console.log("Processing FORTUNE command...");
       result["type"] = 9;
     }
