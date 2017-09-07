@@ -121,6 +121,12 @@ Bender.prototype.bend = function bend(msg, user, channel){
       this._postMessage(user, bot_msg, channel);
       break;
 
+    case 10: // TIMER TEST
+      command_handler.timerHandler(proc_msg.time).then( v => {
+        this._postMessage(user, v.message, channel);
+      });
+
+
     default:
      if(typeof proc_msg.message !== 'undefined'){
         this._postMessage(user, proc_msg.message, channel);
@@ -242,6 +248,13 @@ Bender.prototype._processMessage = function _processMessage(msg){
             msg[1].toUpperCase() === ':FORTUNE:'){
       console.log("Processing FORTUNE command...");
       result["type"] = 9;
+    }
+
+    // TIMER(?) command (Testing threads)
+    else if(msg[1].toUpperCase() === 'TIMER' && msg.length > 2){
+      console.log("Processing TIMER command...");
+      result["type"] = 10;
+      result["time"] = msg[2];
     }
 
     // none found

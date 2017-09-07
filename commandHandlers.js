@@ -345,6 +345,14 @@ exports.command_handler.fortuneHandler = function fortuneHandler(){
   return result;
 }
 
+//handle timer command
+exports.command_handler.timerHandler = async function timerHandler(time){
+  var result = {};
+  var msg = _resolveAfterX("Hopefully " + time + " seconds have passed", time);
+  result["message"] = await msg;
+  return result;
+}
+
 // handle help command
 // params:
 //  command - command to get details of
@@ -462,4 +470,13 @@ function _doRoll(die, times){
   console.log("Results: " + rolls);
 
   return rolls;
+}
+
+// resolve after X seconds
+function _resolveAfterX(msg, time){
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(msg);
+    }, time*1000);
+  });
 }
