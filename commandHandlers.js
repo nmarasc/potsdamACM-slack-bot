@@ -346,7 +346,7 @@ exports.command_handler.fortuneHandler = function fortuneHandler(){
 }
 
 //handle timer command
-exports.command_handler.timerHandler = async function timerHandler(time){
+exports.command_handler.timerHandler = function timerHandler(time){
   var result = {};
   var msg = _resolveAfterX("Hopefully " + time + " seconds have passed", time);
   result["message"] = await msg;
