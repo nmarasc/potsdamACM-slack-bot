@@ -45,7 +45,7 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
   bender = new Bender(rtm, web, bender_opts);
-  //rtm.sendMessage("Bender has successfully connected",channel_ids.bender_dev);
+  rtm.sendMessage("New Bender, who dis?",channel_ids.bender_dev);
 });
 
 rtm.start();

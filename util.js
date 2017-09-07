@@ -67,3 +67,12 @@ exports.util.memeSafeSplit = function memeSafeSplit(msg, delim){
 exports.util.validUserID = function validUserID(id_str){
   return /^<@U[A-Z0-9]{8}>$/.test(id_str);
 }
+
+// set a timer for a specified number of seconds
+exports.util.setTimer = function setTimer(time, args){
+  return new Promise(function(resolve, reject){
+    setTimeout(function() {
+      resolve(args);
+    }, time*1000);
+  });
+}

@@ -19,6 +19,7 @@ function Bender(rtm, web, opts){
   this.channel_ids = opts.channel_ids;
 
   this.bank = {};
+  this.heisters= {};
   this.games = ["COIN","ROLL"];
   this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS","COIN","8BALL",
                    "FORTUNE"];
@@ -121,18 +122,18 @@ Bender.prototype.bend = function bend(msg, user, channel){
       this._postMessage(user, bot_msg, channel);
       break;
 
-    case 10: // TIMER TEST
-      var dirty = {};
-      dirty["rtm"] = this.rtm;
-      dirty["user"] = user;
-      dirty["channel"] = channel;
-      command_handler.timerHandler(proc_msg.time, dirty).then(
-        function(result){
-          result.rtm.sendMessage("<@" + result.user + "> " +
-                                 result.message, result.channel);
-          console.log("Posted: " + result.message + "\nTo: " + result.channel);
-      });
+    case 10: // HEIST
+      var args = {
+        "rtm"         : this.rtm,
+        "bank"        : this.bank,
+        "heisters"    : this.heisters,
+        "channel_ids" : this.channel_ids,
+        "channel"     : channel,
+        "user"        : user}
 
+      // do this async
+      //command_handler.heistHandler(args).then(function(result){});
+      break;
 
     default:
      if(typeof proc_msg.message !== 'undefined'){
@@ -257,11 +258,10 @@ Bender.prototype._processMessage = function _processMessage(msg){
       result["type"] = 9;
     }
 
-    // TIMER(?) command (Testing threads)
-    else if(msg[1].toUpperCase() === 'TIMER' && msg.length > 2){
-      console.log("Processing TIMER command...");
+    // HEIST command
+    else if(msg[1].toUpperCase() === 'HEIST'){
+      console.log("Processing HEIST command...");
       result["type"] = 10;
-      result["time"] = msg[2];
     }
 
     // none found
