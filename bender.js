@@ -122,9 +122,14 @@ Bender.prototype.bend = function bend(msg, user, channel){
       break;
 
     case 10: // TIMER TEST
-      command_handler.timerHandler(proc_msg.time).then(function(result){
-        _postMessage(user, result, channel);
-        console.log("Posted: " + result + "\nTo: " + channel);
+      var dirty = {};
+      dirty["post"] = this._postMessage;
+      dirty["user"] = user;
+      dirty["channel"] = channel;
+      command_handler.timerHandler(proc_msg.time, dirty).then(
+        function(result, dirty){
+          dirty.post(dirty.user, result, dirty.channel);
+          console.log("Posted: " + result + "\nTo: " + dirty.channel);
       });
 
 
