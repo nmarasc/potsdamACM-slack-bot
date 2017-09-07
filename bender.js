@@ -122,8 +122,8 @@ Bender.prototype.bend = function bend(msg, user, channel){
       break;
 
     case 10: // TIMER TEST
-      command_handler.timerHandler(proc_msg.time).then( v => {
-        this._postMessage(user, v.message, channel);
+      command_handler.timerHandler(proc_msg.time).then(function(result){
+        this._postMessage(user, result.message, channel);
       });
 
 
