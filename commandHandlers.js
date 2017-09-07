@@ -347,9 +347,10 @@ exports.command_handler.fortuneHandler = function fortuneHandler(){
 
 //handle timer command
 exports.command_handler.timerHandler = function timerHandler(time, args){
+  args["message"] = "Hopefully" + time + " seconds have passed";
   return new Promise(function(resolve, reject){
     setTimeout(function() {
-      resolve("Hopefully" + time + " seconds have passed", args);
+      resolve(args);
     }, time*1000);
   });
 }
