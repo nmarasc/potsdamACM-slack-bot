@@ -123,7 +123,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
 
     case 10: // TIMER TEST
       var dirty = {};
-      dirty["rtm"] = rtm;
+      dirty["rtm"] = this.rtm;
       dirty["user"] = user;
       dirty["channel"] = channel;
       command_handler.timerHandler(proc_msg.time, dirty).then(
