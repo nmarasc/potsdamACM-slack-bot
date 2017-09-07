@@ -123,7 +123,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
 
     case 10: // TIMER TEST
       command_handler.timerHandler(proc_msg.time).then(function(result){
-        this._postMessage(user, result, channel);
+        _postMessage(user, result, channel);
         console.log("Posted: " + result + "\nTo: " + channel);
       });
 
