@@ -433,6 +433,11 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
                           "<@" + bot_id + "> 8BALL\n";
       break;
 
+    case 8 : // FORTUNE
+      result["message"] = "To use FORTUNE command:\n" +
+                          "<@" + bot_id + "> FORTUNE\n";
+      break;
+
     default : // Unknown command
       result["message"] = command + " is not a recognized command";
       break;
