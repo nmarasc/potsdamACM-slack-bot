@@ -349,7 +349,7 @@ exports.command_handler.fortuneHandler = function fortuneHandler(){
 exports.command_handler.timerHandler = function timerHandler(time){
   return new Promise(function(resolve, reject){
     setTimeout(function() {
-      resolve(msg);
+      resolve("Hopefully" + time + " seconds have passed");
     }, time*1000);
   });
 }
