@@ -156,13 +156,14 @@ Bender.prototype._processMessage = function _processMessage(msg){
   // Legacy "HI" command
   if(msg[0].toUpperCase() === "HI" && msg.length > 1){
     if(msg[1].toUpperCase() === "BENDER" || msg[1].includes(this.bot_id) ||
-       msg[1].toUpperCase() === ":B:") {
+       msg[1].toUpperCase() === ":B:"    || msg[1].toUpperCase() === ":BENDER:") {
       result["type"] = 0;
     }
   }
 
   // Start checking for real commands
-  else if((msg[0].includes(this.bot_id) || msg[0].toUpperCase() === ":B:") &&
+  else if((msg[0].includes(this.bot_id) || msg[0].toUpperCase() === ":B:" ||
+           msg[0].toUpperCase() === ":BENDER:") &&
            msg.length > 1){
     console.log("\nMention detected, checking for command..");
 
