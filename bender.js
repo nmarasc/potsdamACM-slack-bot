@@ -44,7 +44,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
   switch(proc_msg.type){
 
     case 0: // HI command
-      bot_msg = "I'm a Bender. I'm dropping the race. :partyparrot:";
+      bot_msg = "I'm a Bender. I bend girders. :partyparrot:";
       this._postMessage(user, bot_msg, channel);
       break;
 
