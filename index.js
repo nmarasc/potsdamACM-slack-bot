@@ -23,6 +23,8 @@ var channel_ids = {};
 
 var bender;
 
+console.log("Message sub:" + RTM_MESSAGE_SUBTYPES);
+
 // Successfully authenticated
 // Get bot id and the ids of channels bot is a member of
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
