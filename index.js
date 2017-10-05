@@ -52,7 +52,7 @@ rtm.start();
 
 // Message event handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-  //console.log(message.text);
+  console.log(message.text);
   console.log(message.subtype);
   bender.bend(message.text, message.user, message.channel);
 });
