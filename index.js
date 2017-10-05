@@ -52,9 +52,12 @@ rtm.start();
 
 // Message event handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
-  console.log(message.text);
-  console.log(message.subtype);
-  bender.bend(message.text, message.user, message.channel);
+  if(message.subtype === "message_changed"){
+    bender.bend(message.message.text,message.message.user,message.channel);
+  }
+  else{
+    bender.bend(message.text, message.user, message.channel);
+  }
 });
 
 // reaction added handler (doesn't do messages for some godforsaken reason)
