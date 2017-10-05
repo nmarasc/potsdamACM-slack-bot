@@ -3,7 +3,7 @@ require('dotenv').config();
 var RtmClient = require('@slack/client').RtmClient;
 var WebClient = require('@slack/client').WebClient;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
-var RTM_MESSAGE_SUBTYPES('@slack/client').RTM_MESSAGE_SUBTYPES;
+var RTM_MESSAGE_SUBTYPES = ('@slack/client').RTM_MESSAGE_SUBTYPES;
 var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 
 // Bender import
