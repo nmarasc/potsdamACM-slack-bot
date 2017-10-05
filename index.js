@@ -77,7 +77,8 @@ rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
   //console.log(item);
 
   web.reactions.add(evnt.reaction,item, function handleAdd(err,res){
-    if(err){ console.log("There was an error, no reaction added"); }
+    if(err){ console.log("channel: " + item.channel + "\n" +
+                         "ts     : " + item.ts + "\n\n" + err}
     else{ console.log("Posted successfully"); }
   });
 });
