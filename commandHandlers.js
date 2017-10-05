@@ -13,6 +13,13 @@ exports.command_handler.rollHandler = function rollHandler(die_msg, times_msg){
   var rolls = "";
   var die;
 
+  var today = new Date();
+  if(today.getMonth() == 9 && today.getDate() == 31){
+    result["message"] = "You rolled: 13 :ghost:";
+    return result;
+  }
+
+
   // parse die value
   if(util.isInt(die_msg)){
     die = parseInt(die_msg);
