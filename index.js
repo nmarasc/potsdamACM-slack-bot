@@ -72,7 +72,7 @@ rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
     file_comment : evnt.item.file_comment,
     channel      : evnt.item.channel,
     timestamp    : evnt.item.ts,
-    ts           : envt.item.ts};
+    ts           : evnt.item.ts};
 
   //console.log("channel: " + item.channel + "\nts: " + item.ts);
   //console.log(item);
