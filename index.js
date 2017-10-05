@@ -3,7 +3,6 @@ require('dotenv').config();
 var RtmClient = require('@slack/client').RtmClient;
 var WebClient = require('@slack/client').WebClient;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
-var RTM_MESSAGE_SUBTYPES = ('@slack/client').RTM_MESSAGE_SUBTYPES;
 var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 
 // Bender import
@@ -22,8 +21,6 @@ var bender_opts = {};
 var channel_ids = {};
 
 var bender;
-
-console.log("Message sub:" + RTM_MESSAGE_SUBTYPES);
 
 // Successfully authenticated
 // Get bot id and the ids of channels bot is a member of
@@ -56,12 +53,7 @@ rtm.start();
 // Message event handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   //console.log(message.text);
-  bender.bend(message.text, message.user, message.channel);
-});
-
-// Message event handler
-rtm.on(RTM_MESSAGE_SUBTYPES.MESSAGE_CHANGED, function handleRtmMessageUpdate(message) {
-  //console.log(message.text);
+  console.log(message.subtype);
   bender.bend(message.text, message.user, message.channel);
 });
 
