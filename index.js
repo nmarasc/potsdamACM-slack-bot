@@ -3,6 +3,7 @@ require('dotenv').config();
 var RtmClient = require('@slack/client').RtmClient;
 var WebClient = require('@slack/client').WebClient;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
+var RTM_MESSAGE_SUBTYPES('@slack/client').RTM_MESSAGE_SUBTYPES;
 var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 
 // Bender import
@@ -45,13 +46,19 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
   bender = new Bender(rtm, web, bender_opts);
-  rtm.sendMessage("New Bender, who dis?",channel_ids.bender_dev);
+  //rtm.sendMessage("New Bender, who dis?",channel_ids.bender_dev);
 });
 
 rtm.start();
 
 // Message event handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
+  //console.log(message.text);
+  bender.bend(message.text, message.user, message.channel);
+});
+
+// Message event handler
+rtm.on(RTM_MESSAGE_SUBTYPES.MESSAGE_CHANGED, function handleRtmMessageUpdate(message) {
   //console.log(message.text);
   bender.bend(message.text, message.user, message.channel);
 });
