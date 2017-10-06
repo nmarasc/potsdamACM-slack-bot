@@ -55,12 +55,16 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   if(message.subtype === "message_changed"){
     bender.bend(message.message.text,message.message.user,message.channel);
   }
+  else if(message.subtype === "channel_join"){
+    console.log("user: " + message.user + " has joined: " + message.channel);
+    bender.bend("WELCOME",message.user,message.channel);
+  }
   else{
     bender.bend(message.text, message.user, message.channel);
   }
 });
 
-// reaction added handler (doesn't do messages for some godforsaken reason)
+// reaction added handler
 rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
   console.log("\n" + evnt.reaction + " added to " +
 	                   evnt.item.type + " by " +
