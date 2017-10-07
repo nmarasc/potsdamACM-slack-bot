@@ -111,7 +111,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
     case 6: // COMMANDS command
       bot_msg = "The current supported commands are: ";
       bot_msg += this.commands.join(", ");
-      bot_msg += "\nUse <@" + bot_id + "> HELP <command-name> for details"
+      bot_msg += "\nUse <@" + this.bot_id + "> HELP <command-name> for details"
       this._postMessage(user, bot_msg, channel);
       break;
 
