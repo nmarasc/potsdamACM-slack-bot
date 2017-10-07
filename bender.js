@@ -26,6 +26,17 @@ function Bender(rtm, web, opts){
 }
 
 /**
+ * Bender's welcome handler
+ * @param {String} id - user id to welcome
+ */
+Bender.prototype.welcome = function welcome(id){
+  var bot_msg = "Welcome to our Slack! :congaparrot:\n" +
+                "Type <@" + bot_id + "> COMMANDS to get a list of bot commands!\n" +
+                "Enjoy! :bender:";
+  this._postMessage(id, bot_msg, channel_ids.general);
+}
+
+/**
  * Invoke Bender's message handler
  * @param {String} msg - incoming message text
  * @param {String} user - incoming user
@@ -100,7 +111,7 @@ Bender.prototype.bend = function bend(msg, user, channel){
     case 6: // COMMANDS command
       bot_msg = "The current supported commands are: ";
       bot_msg += this.commands.join(", ");
-      bot_msg += "\nUse HELP <command-name> for details"
+      bot_msg += "\nUse <@" + bot_id + "> HELP <command-name> for details"
       this._postMessage(user, bot_msg, channel);
       break;
 
