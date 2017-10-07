@@ -31,9 +31,9 @@ function Bender(rtm, web, opts){
  */
 Bender.prototype.welcome = function welcome(id){
   var bot_msg = "Welcome to our Slack! :congaparrot:\n" +
-                "Type <@" + bot_id + "> COMMANDS to get a list of bot commands!\n" +
+                "Type <@" + this.bot_id + "> COMMANDS to get a list of bot commands!\n" +
                 "Enjoy! :bender:";
-  this._postMessage(id, bot_msg, channel_ids.general);
+  this._postMessage(id, bot_msg, this.channel_ids.general);
 }
 
 /**
