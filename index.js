@@ -53,7 +53,7 @@ rtm.start();
 // Team join handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleTeamJoin(evnt){
   bender.welcome(evnt.user.id);
-}
+});
 
 // Message event handler
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
