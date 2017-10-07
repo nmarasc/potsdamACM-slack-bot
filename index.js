@@ -51,7 +51,7 @@ rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
 rtm.start();
 
 // Team join handler
-rtm.on(RTM_EVENTS.MESSAGE, function handleTeamJoin(evnt){
+rtm.on(RTM_EVENTS.TEAM_JOIN, function handleTeamJoin(evnt){
   bender.welcome(evnt.user.id);
 });
 
