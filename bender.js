@@ -286,7 +286,7 @@ Bender.prototype._processMessage = function _processMessage(msg){
     }
 
     // PICKIT command
-    else if)msg[1].toUpperCase() === 'PICKIT'){
+    else if(msg[1].toUpperCase() === 'PICKIT'){
       console.log("Processing PICKIT command...");
       result["type"] = 11;
       result["ops"] = [];
