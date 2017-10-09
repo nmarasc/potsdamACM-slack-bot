@@ -23,12 +23,3 @@ exports.command_handler.eightballHandler = eightballHandler;
 exports.command_handler.fortuneHandler   = fortuneHandler;
 exports.command_handler.timerHandler     = timerHandler;
 exports.command_handler.helpHandler      = helpHandler;
-
-// resolve after X seconds
-function _resolveAfterX(msg, time){
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(msg);
-    }, time*1000);
-  });
-}
