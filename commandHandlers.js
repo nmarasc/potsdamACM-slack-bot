@@ -5,7 +5,7 @@ var rollHandler     = require('./handlers/rollHandler.js');
 var betHandler      = require('./handlers/betHandler.js');
 var joinHandler     = require('./handlers/joinHandler.js');
 var checkbuxHandler = require('./handlers/checkbuxHandler.js');
-var coinHandler     = require('./handler/coinHandler.js');
+var coinHandler     = require('./handlers/coinHandler.js');
 
 exports.command_handler = {};
 
