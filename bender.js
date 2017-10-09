@@ -22,7 +22,7 @@ function Bender(rtm, web, opts){
   this.heisters= {};
   this.games = ["COIN","ROLL"];
   this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS","COIN","8BALL",
-                   "FORTUNE"];
+                   "FORTUNE","PICKIT"];
 }
 
 /**
@@ -145,6 +145,10 @@ Bender.prototype.bend = function bend(msg, user, channel){
       // do this async
       //command_handler.heistHandler(args).then(function(result){});
       break;
+
+    case 11: // PICKIT
+      var pickit_ops = proc_msg.ops;
+      var pickit_result = command_handler.pickitHandler(user, channel, pickit_ops);
 
     default:
      if(typeof proc_msg.message !== 'undefined'){
@@ -279,6 +283,16 @@ Bender.prototype._processMessage = function _processMessage(msg){
     else if(msg[1].toUpperCase() === 'HEIST'){
       console.log("Processing HEIST command...");
       result["type"] = 10;
+    }
+
+    // PICKIT command
+    else if)msg[1].toUpperCase() === 'PICKIT'){
+      console.log("Processing PICKIT command...");
+      result["type"] = 11;
+      result["ops"] = [];
+      for(let i = 2; i < msg.length; i++){
+        result.ops[i-2] = msg[i];
+      }
     }
 
     // none found

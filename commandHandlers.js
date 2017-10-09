@@ -1,5 +1,3 @@
-var util = require('./util.js').util;
-
 // Handler imports
 var rollHandler      = require('./handlers/rollHandler.js');
 var betHandler       = require('./handlers/betHandler.js');
@@ -10,6 +8,7 @@ var eightballHandler = require('./handlers/eightballHandler.js');
 var fortuneHandler   = require('./handlers/fortuneHandler.js');
 var timerHandler     = require('./handlers/timerHandler.js');
 var helpHandler      = require('./handlers/helpHandler.js');
+var pickitHandler    = require('./handlers/pickitHandler.js');
 
 exports.command_handler = {};
 
@@ -23,3 +22,4 @@ exports.command_handler.eightballHandler = eightballHandler;
 exports.command_handler.fortuneHandler   = fortuneHandler;
 exports.command_handler.timerHandler     = timerHandler;
 exports.command_handler.helpHandler      = helpHandler;
+exports.command_handler.pickitHandler    = pickitHandler;

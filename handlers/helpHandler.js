@@ -93,6 +93,11 @@ module.exports = function helpHandler(command, sub_command,
                           "<@" + bot_id + "> FORTUNE\n";
       break;
 
+    case 9 : // PICKIT
+      result["message"] = "To use PICKIT command:\n" +
+                          "<@" + bot_id + "> Thing1 [Thing2 Thing3 ...]\n";
+      break;
+
     default : // Unknown command
       result["message"] = command + " is not a recognized command";
       break;

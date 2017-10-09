@@ -66,6 +66,7 @@ rtm.on(RTM_EVENTS.TEAM_JOIN, function handleTeamJoin(evnt){
 /* Message event handler                                                     */
 /*****************************************************************************/
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
+
   if(message.subtype === "message_changed"){
     bender.bend(message.message.text,message.message.user,message.channel);
   }
