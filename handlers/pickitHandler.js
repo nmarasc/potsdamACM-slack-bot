@@ -1,4 +1,4 @@
-var util = require('./util.js').util;
+var util = require('../util.js').util;
 
 module.exports = function pickitHandler(ops){
   var result = {};
