@@ -72,14 +72,14 @@ exports.util.quoteSafeSplit = function QuoteSafeSplit(msg, delim){
       result[result.length] = token;
       token = "";
     }
-    else{
-      if(msg.charAt(i) === "\""){
-        i++;
-        while(msg.charAt(i) !== "\""){
-          token += msg.charAt(i++);
-        }
-        i++;
+    else if(msg.charAt(i) === "\""){
+      i++;
+      while(msg.charAt(i) !== "\""){
+        token += msg.charAt(i++);
       }
+      i++;
+    }
+    else{
       token += msg.charAt(i);
     }
   }
