@@ -6,7 +6,7 @@ var util = require('../util.js').util;
  * @param {String} times_msg - message containing the number of times to roll
  * @returns {Object} - object containing the message to report
  */
-exports.rollHandler = function rollHandler(die_msg, times_msg){
+exports = function rollHandler(die_msg, times_msg){
   var result = {};
   var rolls = "";
   var die;
