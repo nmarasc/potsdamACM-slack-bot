@@ -148,10 +148,9 @@ Bender.prototype.bend = function bend(msg, user, channel){
 
     case 11: // PICKIT
       var pickit_ops = proc_msg.ops;
-      console.log(pickit_ops.length);
-      var pickit_result = command_handler.pickitHandler(user, channel, pickit_ops);
+      var pickit_result = command_handler.pickitHandler(pickit_ops);
       bot_msg = pickit_result.message;
-      //this._postMessage(user, bot_msg, channel);
+      this._postMessage(user, bot_msg, channel);
       break;
 
     default:
@@ -296,9 +295,7 @@ Bender.prototype._processMessage = function _processMessage(msg){
       result["ops"] = [];
       for(let i = 2; i < msg.length; i++){
         result.ops[i-2] = msg[i];
-        console.log(msg[i]+" -> "+result.ops[i-2]);
       }
-      console.log(result.ops.length);
     }
 
     // none found
