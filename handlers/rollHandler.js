@@ -1,7 +1,5 @@
 var util = require('../util.js').util;
 
-// exports.rollHandler = {};
-
 /**
  * Handles roll commands
  * @param {String} die_msg - message containing the value to roll
@@ -93,3 +91,4 @@ exports.rollHandler = function rollHandler(die_msg, times_msg){
   return result;
 }
 
+module.exports = exports;
