@@ -68,7 +68,7 @@ exports.util.quoteSafeSplit = function QuoteSafeSplit(msg, delim){
   var result = [];
   var token = "";
   for(var i = 0; i < msg.length; i++){
-    if(msg.charAt(i) === delim){
+    if(msg.charAt(i) === delim && token !== ""){
       result[result.length] = token;
       token = "";
     }
