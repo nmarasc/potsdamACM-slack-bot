@@ -55,7 +55,7 @@ exports = function rollHandler(die_msg, times_msg){
 
   console.log("Die to roll: " + die);
 
-  var rolls = _doRoll(die,times);
+  var rolls = util.doRoll(die,times);
   var roll_msg = "You rolled: " + rolls.join(", ");
 
   // special emote mode

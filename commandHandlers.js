@@ -82,7 +82,7 @@ exports.command_handler.betHandler = function betHandler(user, channel, opts){
 
       if(amount <= bank[user]){
         bank[user] -= amount;
-        var roll = _doRoll(2,1)[0];
+        var roll = util.doRoll(2,1)[0];
         result.message = "You got: ";
         if(roll === 1){ result.message += "HEADS\n"; }
         else{ result.message += "TAILS\n"; }
@@ -142,7 +142,7 @@ exports.command_handler.betHandler = function betHandler(user, channel, opts){
       // think we can play now
       if(amount <= bank[user]){
         bank[user] -= amount;
-        var roll = _doRoll(die,1)[0];
+        var roll = util.doRoll(die,1)[0];
         result.message = "You got: " + roll + "\n";
         if(roll >= win_val){ // win
           result.message += "You win! You\'ve earned " + (amount*2) + " scrumbux!";
@@ -244,7 +244,7 @@ exports.command_handler.checkbuxHandler = function checkbuxHandler(user, opts){
 exports.command_handler.coinHandler = function coinHandler(){
   var result = {};
   result["message"] = "You got: ";
-  var roll = _doRoll(2,1)[0];
+  var roll = util.doRoll(2,1)[0];
   result["message"] += roll === 1 ? "HEADS" : "TAILS";
   return result;
 }
@@ -252,7 +252,7 @@ exports.command_handler.coinHandler = function coinHandler(){
 // handle 8ball command
 exports.command_handler.eightballHandler = function eightballHandler(){
   var result = {};
-  var roll = _doRoll(20,1)[0];
+  var roll = util.doRoll(20,1)[0];
   result["message"] = util.eightball_msg[roll-1];
   return result;
 }
@@ -260,9 +260,9 @@ exports.command_handler.eightballHandler = function eightballHandler(){
 // handle fortune command
 exports.command_handler.fortuneHandler = function fortuneHandler(){
   var result = {};
-  var roll = _doRoll(util.quotes.length,1)[0];
+  var roll = util.doRoll(util.quotes.length,1)[0];
   result["message"] = util.quotes[roll-1] + "..in bed ";
-  roll = _doRoll(util.emotes.length,1)[0];
+  roll = util.doRoll(util.emotes.length,1)[0];
   result["message"] += util.emotes[roll-1];
   return result;
 }
@@ -350,12 +350,14 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 
     case 5 : // COMMANDS
       result["message"] = "To use COMMANDS command:\n" +
-                          "<@" + bot_id + "> COMMANDS\n";
+                          "<@" + bot_id + "> COMMANDS\n" +
+                          "C\'mon, it\'s not that hard";
       break;
 
     case 6 : // COIN
       result["message"] = "To use COIN command:\n" +
-                          "<@" + bot_id + "> COIN\n";
+                          "<@" + bot_id + "> COIN\n" +
+                          "C\'mon, it\'s not that hard";
       break;
 
     case 7 : // 8BALL
@@ -375,24 +377,6 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
   return result;
 }
 
-// do the rolls
-// params:
-//   die - upper bound on roll
-//   times - number of rolls
-// returns: rolls
-function _doRoll(die, times){
-  console.log("Rolling " + die + " " + times + " times");
-
-  var rolls = [];
-
-  for(let i = 0; i < times; i++){
-    rolls[i] = Math.floor(Math.random() * die) + 1;
-  }
-
-  console.log("Results: " + rolls);
-
-  return rolls;
-}
 
 // resolve after X seconds
 function _resolveAfterX(msg, time){

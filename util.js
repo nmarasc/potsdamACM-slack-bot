@@ -76,3 +76,22 @@ exports.util.setTimer = function setTimer(time, args){
     }, time*1000);
   });
 }
+
+// do the rolls
+// params:
+//   die - upper bound on roll
+//   times - number of rolls
+// returns: rolls
+exports.util.doRoll = function doRoll(die, times){
+  console.log("Rolling " + die + " " + times + " times");
+
+  var rolls = [];
+
+  for(let i = 0; i < times; i++){
+    rolls[i] = Math.floor(Math.random() * die) + 1;
+  }
+
+  console.log("Results: " + rolls);
+
+  return rolls;
+}
