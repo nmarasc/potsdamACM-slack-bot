@@ -95,7 +95,7 @@ module.exports = function helpHandler(command, sub_command,
 
     case 9 : // PICKIT
       result["message"] = "To use PICKIT command:\n" +
-                          "<@" + bot_id + "> Thing1 [Thing2 Thing3 ...]\n";
+                          "<@" + bot_id + "> Thing1[, Thing2, Thing3...]\n";
       break;
 
     default : // Unknown command
