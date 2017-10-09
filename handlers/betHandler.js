@@ -40,6 +40,12 @@ module.exports = function betHandler(user, channel, opts){
   var amount;
   var game;
 
+  if(typeof game_data.amount === 'undefined' ||
+     typeof game_data.game   === 'undefined'){
+    result.message = "One or more parameters are missing from command\n" +
+                     "Use the HELP BET command for proper use";
+    return result;
+  }
 
   // parse betting amount
   if(util.isInt(game_data.amount) && parseInt(game_data.amount) > 0){
