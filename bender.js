@@ -146,11 +146,6 @@ Bender.prototype.bend = function bend(msg, user, channel){
       //command_handler.heistHandler(args).then(function(result){});
       break;
 
-    case 11: // WELCOME
-      bot_msg = "Welcome";
-      //post
-      break;
-
     default:
      if(typeof proc_msg.message !== 'undefined'){
         this._postMessage(user, proc_msg.message, channel);
@@ -243,7 +238,7 @@ Bender.prototype._processMessage = function _processMessage(msg){
     }
 
     // BET command
-    else if(msg[1].toUpperCase() === "BET" && msg.length > 3){
+    else if(msg[1].toUpperCase() === "BET"){
       console.log("Processing BET command...");
       result["type"] = 5;
       result["game_data"] = {};
