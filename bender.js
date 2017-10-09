@@ -135,6 +135,11 @@ Bender.prototype.bend = function bend(msg, user, channel){
       //command_handler.heistHandler(args).then(function(result){});
       break;
 
+    case 11: // WELCOME
+      bot_msg = "Welcome";
+      //post
+      break;
+
     default:
      if(typeof proc_msg.message !== 'undefined'){
         this._postMessage(user, proc_msg.message, channel);
@@ -159,6 +164,11 @@ Bender.prototype._processMessage = function _processMessage(msg){
        msg[1].toUpperCase() === ":B:"    || msg[1].toUpperCase() === ":BENDER:") {
       result["type"] = 0;
     }
+  }
+
+  // Welcome thing
+  else if(msg[0].toUpperCase() === "WELCOME" && msg.length == 1){
+    result["type"] = 11;
   }
 
   // Start checking for real commands

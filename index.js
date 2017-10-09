@@ -12,18 +12,20 @@ var Bender = require('./bender.js').Bender;
 var bot_token = process.env.SLACK_BOT_TOKEN || '';
 console.log("Token connected with: " + bot_token);
 
-// create clients to make api calls
+// Create clients to make api calls
 var rtm = new RtmClient(bot_token);
 var web = new WebClient(bot_token);
 
 var bender_opts = {};
-// channel ids
+// Channel ids
 var channel_ids = {};
 
 var bender;
 
-// Successfully authenticated
-// Get bot id and the ids of channels bot is a member of
+/*****************************************************************************/
+/* Authenticate to Slack                                                     */
+/* Get bot id and the ids of channels bot is a member of                     */
+/*****************************************************************************/
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
   bender_opts["bot_id"] = rtmStartData.self.id;
   console.log("Name/ID: " + bender_opts.bot_id);
@@ -41,16 +43,21 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
               ", but not yet connected to channel");
 });
 
-// Successfully connected to RTM
+/*****************************************************************************/
+/* Successfully connected to RTM                                             */
+/*****************************************************************************/
 rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
   console.log("RTM connection opened successfully\n\n");
   bender = new Bender(rtm, web, bender_opts);
   //rtm.sendMessage("New Bender, who dis?",channel_ids.bender_dev);
 });
 
+// Start up the rtm
 rtm.start();
 
-// Message event handler
+/*****************************************************************************/
+/* Message event handler                                                     */
+/*****************************************************************************/
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   if(message.subtype === "message_changed"){
     bender.bend(message.message.text,message.message.user,message.channel);
@@ -64,7 +71,9 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   }
 });
 
-// reaction added handler
+/*****************************************************************************/
+/* Reaction added event handler                                              */
+/*****************************************************************************/
 rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
   console.log("\n" + evnt.reaction + " added to " +
 	                   evnt.item.type + " by " +
