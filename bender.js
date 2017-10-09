@@ -149,6 +149,9 @@ Bender.prototype.bend = function bend(msg, user, channel){
     case 11: // PICKIT
       var pickit_ops = proc_msg.ops;
       var pickit_result = command_handler.pickitHandler(user, channel, pickit_ops);
+      bot_msg = pickit_result.message;
+      this._postMessage(user, bot_msg, channel);
+      break;
 
     default:
      if(typeof proc_msg.message !== 'undefined'){
