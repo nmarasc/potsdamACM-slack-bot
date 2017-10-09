@@ -63,6 +63,30 @@ exports.util.memeSafeSplit = function memeSafeSplit(msg, delim){
   return result;
 }
 
+// split while preserving quoted strings
+exports.util.quoteSafeSplit = function QuoteSafeSplit(msg, delim){
+  var result = [];
+  var token = "";
+  for(var i = 0; i < msg.length; i++){
+    if(msg.charAt(i) === delim){
+      result[result.length] = token;
+      token = "";
+    }
+    else{
+      if(msg.charAt(i) === "\""){
+        i++;
+        while(msg.charAt(i) !== "\""){
+          token += msg.charAt(i++);
+        }
+        i++;
+      }
+      token += msg.charAt(i);
+    }
+  }
+  result[result.length] = token;
+  return result;
+}
+
 // check for valid user id format
 exports.util.validUserID = function validUserID(id_str){
   return /^<@U[A-Z0-9]{8}>$/.test(id_str);
