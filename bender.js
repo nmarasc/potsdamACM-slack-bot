@@ -297,6 +297,7 @@ Bender.prototype._processMessage = function _processMessage(msg){
         result.ops[i-2] = msg[i];
       }
       result.ops = result.ops.join(" ").split(", ");
+      console.log(result.ops + "<");
     }
 
     // none found
