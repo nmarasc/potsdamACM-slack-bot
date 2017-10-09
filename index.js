@@ -56,15 +56,18 @@ rtm.on(CLIENT_EVENTS.RTM.RTM_CONNECTION_OPENED, function() {
 rtm.start();
 
 /*****************************************************************************/
+/* Team join handler                                                         */
+/*****************************************************************************/
+rtm.on(RTM_EVENTS.TEAM_JOIN, function handleTeamJoin(evnt){
+  bender.welcome(evnt.user.id);
+});
+
+/*****************************************************************************/
 /* Message event handler                                                     */
 /*****************************************************************************/
 rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
   if(message.subtype === "message_changed"){
     bender.bend(message.message.text,message.message.user,message.channel);
-  }
-  else if(message.subtype === "channel_join"){
-    console.log("user: " + message.user + " has joined: " + message.channel);
-    bender.bend("WELCOME",message.user,message.channel);
   }
   else{
     bender.bend(message.text, message.user, message.channel);

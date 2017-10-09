@@ -350,14 +350,12 @@ exports.command_handler.helpHandler = function helpHandler(command, sub_command,
 
     case 5 : // COMMANDS
       result["message"] = "To use COMMANDS command:\n" +
-                          "<@" + bot_id + "> COMMANDS\n" +
-                          "C\'mon, it\'s not that hard";
+                          "<@" + bot_id + "> COMMANDS\n";
       break;
 
     case 6 : // COIN
       result["message"] = "To use COIN command:\n" +
-                          "<@" + bot_id + "> COIN\n" +
-                          "C\'mon, it\'s not that hard";
+                          "<@" + bot_id + "> COIN\n";
       break;
 
     case 7 : // 8BALL
