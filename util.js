@@ -4,6 +4,19 @@ exports.util.quotes = require("./bigStupidArrays.js").quotes;
 exports.util.eightball_msg = require("./bigStupidArrays.js").eightball_msg;
 exports.util.emotes = require("./bigStupidArrays.js").emotes;
 
+exports.util.commandMap = { "ROLL"       : 0  , ":GAME_DIE:" : 0
+                          , "JOIN"       : 1
+                          , "CHECKBUX"   : 2
+                          , "HELP"       : 3
+                          , "BET"        : 4
+                          , "COMMANDS"   : 5
+                          , "COIN"       : 6
+                          , "8BALL"      : 7  , ":8BALL:"    : 7
+                          , "FORTUNE"    : 8  , ":FORTUNE:"  : 8
+                          , "PICKIT"     : 9
+                          , "PRAISE"     : 10 , ":PRAY:"     : 10
+                          };
+
 // check for numeric values
 // params: n - value to check
 // returns: true if numeric, false otherwise

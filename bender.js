@@ -18,11 +18,12 @@ function Bender(rtm, web, opts){
   this.bot_id = opts.bot_id;
   this.channel_ids = opts.channel_ids;
 
+  this.praises = 0;
   this.bank = {};
   this.heisters= {};
   this.games = ["COIN","ROLL"];
   this.commands = ["ROLL","JOIN","CHECKBUX","HELP","BET","COMMANDS","COIN","8BALL",
-                   "FORTUNE","PICKIT"];
+                   "FORTUNE","PICKIT","PRAISE"];
 }
 
 /**
@@ -151,6 +152,12 @@ Bender.prototype.bend = function bend(msg, user, channel){
       var pickit_result = command_handler.pickitHandler(pickit_ops);
       bot_msg = pickit_result.message;
       this._postMessage(user, bot_msg, channel);
+      break;
+
+    case 12: // PRAISE
+      var bot_msg = "Bender has been praised " + ++this.praises +
+                    " times since last restart";
+      this._postMessage(undefined, bot_msg, channel);
       break;
 
     default:
@@ -300,6 +307,12 @@ Bender.prototype._processMessage = function _processMessage(msg){
 //       console.log(result.ops + "<");
     }
 
+    // PRAISE command
+    else if(msg[1].toUpperCase() === 'PRAISE' || msg[1].toUpperCase() === ':PRAY:'){
+      console.log("Processing PRAISE command...");
+      result["type"] = 12;
+    }
+
     // none found
     else{
       console.log("No command found");
@@ -323,7 +336,12 @@ Bender.prototype._processMessage = function _processMessage(msg){
  * @private
  */
 Bender.prototype._postMessage = function _postMessage(user, message, channel){
-  this.rtm.sendMessage("<@" + user + "> " + message, channel);
+  if(typeof user !== 'undefined'){
+    this.rtm.sendMessage("<@" + user + "> " + message, channel);
+  }
+  else{
+    this.rtm.sendMessage(message, channel);
+  }
 }
 
 module.exports.Bender = Bender;

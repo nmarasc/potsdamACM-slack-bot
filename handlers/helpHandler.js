@@ -4,8 +4,7 @@ var util = require('../util.js').util;
 // params:
 //  command - command to get details of
 // returns: message object
-module.exports = function helpHandler(command, sub_command,
-                                                           opts){
+module.exports = function helpHandler(command, sub_command, opts){
   var result = {};
   var commands = opts.commands;
   var games = opts.games;
@@ -17,7 +16,7 @@ module.exports = function helpHandler(command, sub_command,
     return result;
   }
 
-  var index = commands.indexOf(command.toUpperCase());
+  var index = util.commandMap[command.toUpperCase()];
   switch(index){
 
     case 0 : // ROLL
@@ -98,10 +97,14 @@ module.exports = function helpHandler(command, sub_command,
                           "<@" + bot_id + "> Thing1 [ Thing2 Thing3 ...]\n";
       break;
 
+    case 10: // PRAISE
+      result["message"] = "To use PRAISE command:\n" +
+                          "<@" + bot_id + "> PRAISE\n";
+      break;
+
     default : // Unknown command
       result["message"] = command + " is not a recognized command";
       break;
   }
   return result;
 }
-
