@@ -79,6 +79,10 @@ rtm.on(RTM_EVENTS.MESSAGE, function handleRtmMessage(message) {
 /* Reaction added event handler                                              */
 /*****************************************************************************/
 rtm.on(RTM_EVENTS.REACTION_ADDED, function handleReactionAdded(evnt) {
+  if(evnt.user == bender_opts.bot_id){
+    return;
+  }
+
   console.log("\n" + evnt.reaction + " added to " +
 	                   evnt.item.type + " by " +
 	                   evnt.user);
