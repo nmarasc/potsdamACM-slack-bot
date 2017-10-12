@@ -12,7 +12,8 @@ module.exports = function rollHandler(die_msg, times_msg){
   var die;
 
   var today = new Date();
-  if(today.getMonth() == 9 && today.getDate() == 31){
+  if((today.getMonth() == 9 && today.getDate() == 31) ||
+     (today.getDate() == 13 && today.getDay() == 5)){
     result["message"] = "You rolled: 13 :ghost:";
     return result;
   }
