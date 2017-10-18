@@ -7,6 +7,6 @@ module.exports = function fortuneHandler(){
   result["message"] = util.quotes[roll-1] + "..~in bed~ ";
   //roll = util.doRoll(util.emotes.length,1)[0];
   //result["message"] += util.emotes[roll-1];
-  result["message"] += "~ **censored** :communist:";
+  result["message"] += "**censored** :communist:";
   return result;
 }
