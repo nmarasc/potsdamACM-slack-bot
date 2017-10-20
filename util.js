@@ -162,3 +162,51 @@ exports.util.intToEmoji = function intToEmoji(n){
 
   return result;
 }
+
+// Convert a number to emojis
+// Params:
+//     n - number to convert
+// Returns:
+//     result - a slack emoji string
+exports.util.intToEmoji = function emojiToInt(n){
+  Console.log("The emoji passed in is" + n);
+
+  //a list of the key emojis
+  var a = [":zero:", ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"];
+
+  var emojiParse = function(emj) {
+    switch(emj){
+      case "zero":
+        return 0;
+      case "one":
+        return 1;
+      case "two":  
+         return 2;
+      case "three":
+        return 3;
+      case "four":
+        return 4;
+      case "five":
+        return 5;
+      case "six":
+        return 6;
+      case "seven":
+        return 7;
+      case "eight":
+        return 8;
+      case "nine":
+        return 9;
+      default:
+        return 0;
+    }
+  }
+
+  n = n.split("::");
+  var result = 0;
+  for(i = 0; i < n.length; i++){
+    n[i] = n[i].replace( ":" , "");
+    result = result * 10;
+    result = result + emojiParse(n[i].toLowerCase());
+  }
+  return result;
+}
