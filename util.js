@@ -168,7 +168,7 @@ exports.util.intToEmoji = function intToEmoji(n){
 //     n - number to convert
 // Returns:
 //     result - a slack emoji string
-exports.util.intToEmoji = function emojiToInt(n){
+exports.util.emojiToInt = function emojiToInt(n){
   Console.log("The emoji passed in is" + n);
 
   //a list of the key emojis
