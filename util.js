@@ -135,3 +135,32 @@ exports.util.doRoll = function doRoll(die, times){
 
   return rolls;
 }
+
+// Convert a number to emojis
+// Params:
+//     n - number to convert
+// Returns:
+//     result - a slack emoji string
+exports.util.intToEmoji = function myFunction(n){
+	Console.log("The number passed in is" + n);
+
+	//a list of the key emojis
+	var a = [":zero:", ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"];
+	//check if the incoming n is 0
+	if(n == 0){
+		return a[0];
+	}
+
+	//construct a result to return
+	var result = "";
+    
+    //I want to die
+	while(n >= 1){
+        //It made me do this
+		var lowDigit = Math.round(n % 10);
+		n = n / 10;
+		result =  a[lowDigit] + result;
+	}
+
+	return result;
+}
