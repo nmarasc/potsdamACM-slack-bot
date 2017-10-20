@@ -141,7 +141,7 @@ exports.util.doRoll = function doRoll(die, times){
 //     n - number to convert
 // Returns:
 //     result - a slack emoji string
-exports.util.intToEmoji = function myFunction(n){
+exports.util.intToEmoji = function intToEmoji(n){
   Console.log("The number passed in is" + n);
 
   //a list of the key emojis
