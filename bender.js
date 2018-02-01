@@ -160,6 +160,11 @@ Bender.prototype.bend = function bend(msg, user, channel){
       this._postMessage(undefined, bot_msg, channel);
       break;
 
+    case 13: // CHARACTER
+      bot_msg = command_handler.characterHandler().message;
+      this._postMessage(user, bot_msg, channel);
+      break;
+
     default:
      if(typeof proc_msg.message !== 'undefined'){
         this._postMessage(user, proc_msg.message, channel);
@@ -202,6 +207,11 @@ Bender.prototype._processMessage = function _processMessage(msg){
         msg.length > 2){
       console.log("Processing ROLL command...");
       result["type"] = 1;
+
+      if(msg[2].toUpperCase() === "CHARACTER" || msg[2].toUpperCase() === ":CROSSED_SWORDS:"){
+        result["type"] = 13;
+        return result;
+      }
 
       // this monstrosity hits all d cases
       if(/^((:[a-z0-9_-]+:)|\d+)?d((:[a-z0-9_-]+:)|\d+)$/i.test(msg[2])){

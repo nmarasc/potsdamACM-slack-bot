@@ -9,6 +9,7 @@ var fortuneHandler   = require('./handlers/fortuneHandler.js');
 var timerHandler     = require('./handlers/timerHandler.js');
 var helpHandler      = require('./handlers/helpHandler.js');
 var pickitHandler    = require('./handlers/pickitHandler.js');
+var characterHandler = require('./handlers/characterHandler.js');
 
 exports.command_handler = {};
 
@@ -23,3 +24,4 @@ exports.command_handler.fortuneHandler   = fortuneHandler;
 exports.command_handler.timerHandler     = timerHandler;
 exports.command_handler.helpHandler      = helpHandler;
 exports.command_handler.pickitHandler    = pickitHandler;
+exports.command_handler.characterHandler = characterHandler;
