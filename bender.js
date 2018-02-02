@@ -208,7 +208,7 @@ Bender.prototype._processMessage = function _processMessage(msg){
       console.log("Processing ROLL command...");
       result["type"] = 1;
 
-      if(msg[2].toUpperCase() === "CHARACTER" || msg[2].toUpperCase() === "DRAGON"){
+      if(msg[2].toUpperCase() === "CHARACTER" || msg[2].toUpperCase() === ":DRAGON:"){
         result["type"] = 13;
         return result;
       }
