@@ -24,7 +24,7 @@ exports.eightball_msg = [
   "Ask again later",
   "Better not tell you now",
   "Cannot predict now",
-  "Consentrate and ask again",
+  "Concentrate and ask again",
   "Don\'t count on it",
   "My reply is no",
   "My sources say no",
