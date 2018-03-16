@@ -47,10 +47,10 @@ module.exports = function rollHandler(die_msg, times_msg){
     result["message"] = die_msg + " is not a valid roll.";
     return result;
   }
-  if(isNaN(times) || times < 1 || times > 10){
+  if(isNaN(times) || times < 1 || times > 20){
     console.log("Not a valid times: " + times_msg);
     result["message"] = times_msg + " is not a valid number of rolls.\n" +
-                                    "Must be a number between 1 and 10";
+                                    "Must be a number between 1 and 20";
     return result;
   }
 
