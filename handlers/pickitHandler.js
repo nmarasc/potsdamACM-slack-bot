@@ -3,8 +3,8 @@ var util = require('../util.js').util;
 module.exports = function pickitHandler(ops){
   var result = {};
 
-  if(ops.length < 2 || ops.length > 10){
-    result["message"] = "Must pick between 2 and 10 things";
+  if(ops.length < 2 || ops.length > 20){
+    result["message"] = "Must pick between 2 and 20 things";
     return result;
   }
 
